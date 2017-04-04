@@ -1,1 +1,3 @@
 theme: jekyll-theme-slate
+title: Capsule
+description: A package-oriented dependency injection container.
