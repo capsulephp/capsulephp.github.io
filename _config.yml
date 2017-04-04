@@ -1,6 +1,4 @@
-theme: jekyll-theme-slate
+theme: jekyll-theme-midnight
 title: Capsule
 description: A package-oriented dependency injection container.
-site:
-  github:
-    repository_url: https://github.com/capsulephp/di/
+repository_url: https://github.com/capsulephp/di/
