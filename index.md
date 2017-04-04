@@ -1,4 +1,4 @@
-<div style="text-align: center;"</div>
+<div style="text-align: center;">
   <img style="border: none; width: 128px; height: 128px;" src="/capsule.png" />
 </div>
 
