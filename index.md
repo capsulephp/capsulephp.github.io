@@ -20,7 +20,7 @@ public methods for object retrieval.
 The following container provides a shared instance of a hypothetical data mapper
 using a shared instance of PDO.
 
-{% highlight php %}
+```php
 class MyCapsule extends \Capsule\Di\AbstractContainer
 {
     protected function init()
@@ -56,7 +56,7 @@ $capsule = new MyCapsule([
 ]);
 
 $mapper = $capsule->getMyDataMapper(); // instanceof MyDataMapper
-{% endhighlight %}
+```
 
 ## Initialization Methods
 
@@ -70,7 +70,7 @@ arguments, post-instantiation method calls, and instantiation factory for a
 particular class.  All object instantiations will use this configuration by
 default.
 
-{% highlight php %}
+```php
 protected function init()
 {
     // ...
@@ -80,7 +80,7 @@ protected function init()
         'baz',
     );
 }
-{% endhighlight %}
+```
 
 ### provide(*string* $id, *LazyInterface* $lazy = null) : *?LazyNew*
 
@@ -93,7 +93,7 @@ and the shared instance is registered under that class name.
 The returned LazyNew object extends Config, so you can further configure the
 object prior to its instantiation, overriding the class defaults.
 
-{% highlight php %}
+```php
 protected function init()
 {
     // ...
@@ -108,7 +108,7 @@ protected function init()
         'gir',
     );
 }
-{% endhighlight %}
+```
 
 Use this to provide a shared instance of a class that will be reused after it is
 instantiated. The shared instance is registered under the `$id`, which may be
@@ -124,7 +124,7 @@ will return `null`.
 Use this to specify that a dependency should should be a shared service instance
 registered using `provide()`. (The service instance may not be defined yet.)
 
-{% highlight php %}
+```php
 protected function init()
 {
     // ...
@@ -133,14 +133,14 @@ protected function init()
         $this->service(Bar::CLASS)
     );
 }
-{% endhighlight %}
+```
 
 ### serviceCall(*string* $id, *string* $func, ...$args) : *LazyCall*
 
 Use this to specify that a dependency should be the result of a method call to
 a shared service instance.
 
-{% highlight php %}
+```php
 protected function init()
 {
     // ...
@@ -154,14 +154,14 @@ protected function init()
         $this->serviceCall(MapperLocator::CLASS, 'get', WikiMapper::CLASS)
     );
 }
-{% endhighlight %}
+```
 
 ### new(*string* $class) : *LazyNew*
 
 Use this to specify that a dependency should be a **new** instance of a class,
 not a shared instance.
 
-{% highlight php %}
+```php
 protected function init()
 {
     // ...
@@ -170,7 +170,7 @@ protected function init()
         $this->new(SupportingObject::CLASS)
     );
 }
-{% endhighlight %}
+```
 
 The returned LazyNew object extends Config, so you can further configure the
 object prior to its instantiation, overriding the class defaults.
@@ -181,7 +181,7 @@ Use this to specify that a dependency should be the results of invoking a
 callable, whether an instance method, static method, or function. (The PHP
 keywords `include` and `require` are also supported.)
 
-{% highlight php %}
+```php
 protected function init()
 {
     // ...
@@ -190,7 +190,7 @@ protected function init()
         $this->call('include', '/path/to/file.php')
     );
 }
-{% endhighlight %}
+```
 
 ### closure(*string* $func, ...$args) : *\Closure*
 
@@ -200,7 +200,7 @@ containers, locators, registries, and factories. It will not be invoked as a
 lazy-loaded dependency at instantiation time.
 
 
-{% highlight php %}
+```php
 protected function init()
 {
     // ...
@@ -215,7 +215,7 @@ protected function init()
         ]
     );
 }
-{% endhighlight %}
+```
 
 ### env(*string* $key) : *mixed*
 
@@ -223,7 +223,7 @@ Returns the value of the `$env[$key]` property (if it is set), then the value of
 `getenv($id)` (if it is not `false`), and then `null`. (The `$env` property
 values are populated at `__construct()` time.)
 
-{% highlight php %}
+```php
 protected function init()
 {
     // ...
@@ -233,7 +233,7 @@ protected function init()
         $this->env('DB_PASSWORD')
     );
 }
-{% endhighlight %}
+```
 
 ### alias(*string* $from, *string* $to) : *void*
 
@@ -242,10 +242,10 @@ requests for `$from` will receive an instance of `$to`.
 
 This can be useful for specifying default implementations for interfaces.
 
-{% highlight php %}
+```php
 $this->alias('FooInterface', 'FooImplementation');
 $instance = $this->newInstance('FooInterface'); // instanceof FooImplementation
-{% endhighlight %}
+```
 
 ## Kickoff Methods
 
@@ -262,7 +262,7 @@ This returns a new instance of the specified class, with additional arguments
 that override the default for that class. Multiple calls to `newInstance()`
 return different new instances.
 
-{% highlight php %}
+```php
 class MyCapsule extends \Capsule\Di\AbstractContainer
 {
     public function newPdo() : PDO
@@ -270,14 +270,14 @@ class MyCapsule extends \Capsule\Di\AbstractContainer
         return $this->newInstance(PDO::CLASS);
     }
 }
-{% endhighlight %}
+```
 
 ### serviceInstance(*string* $id) : *mixed*
 
 This returns a shared service instance from the Capsule. Multiple calls to
 `serviceInstance()` return the same instance.
 
-{% highlight php %}
+```php
 class MyCapsule
 {
     public function getPdo() : PDO
@@ -285,7 +285,7 @@ class MyCapsule
         return $this->serviceInstance(PDO::CLASS);
     }
 }
-{% endhighlight %}
+```
 
 ## Config Object Methods
 
@@ -335,7 +335,7 @@ Non-class typehints cannot be configured automatically.
 PSR-11 is a "stringly"-typed interface. The Capsule container does not implement
 it by default, but you can do so easily.
 
-{% highlight php %}
+```php
 class Psr11Capsule implements \Psr\Container\ContainerInterface
 {
     public function get($id)
@@ -348,7 +348,7 @@ class Psr11Capsule implements \Psr\Container\ContainerInterface
         return $this->getRegistry()->has($id);
     }
 }
-{% endhighlight %}
+```
 
 ## Serving From Other Containers
 
