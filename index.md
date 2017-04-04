@@ -21,6 +21,7 @@ The following container provides a shared instance of a hypothetical data mapper
 using a shared instance of PDO.
 
 ```php
+<?php
 class MyCapsule extends \Capsule\Di\AbstractContainer
 {
     protected function init()
@@ -71,6 +72,7 @@ particular class.  All object instantiations will use this configuration by
 default.
 
 ```php
+<?php
 protected function init()
 {
     // ...
@@ -94,6 +96,7 @@ The returned LazyNew object extends Config, so you can further configure the
 object prior to its instantiation, overriding the class defaults.
 
 ```php
+<?php
 protected function init()
 {
     // ...
@@ -125,6 +128,7 @@ Use this to specify that a dependency should should be a shared service instance
 registered using `provide()`. (The service instance may not be defined yet.)
 
 ```php
+<?php
 protected function init()
 {
     // ...
@@ -141,6 +145,7 @@ Use this to specify that a dependency should be the result of a method call to
 a shared service instance.
 
 ```php
+<?php
 protected function init()
 {
     // ...
@@ -162,6 +167,7 @@ Use this to specify that a dependency should be a **new** instance of a class,
 not a shared instance.
 
 ```php
+<?php
 protected function init()
 {
     // ...
@@ -182,6 +188,7 @@ callable, whether an instance method, static method, or function. (The PHP
 keywords `include` and `require` are also supported.)
 
 ```php
+<?php
 protected function init()
 {
     // ...
@@ -201,6 +208,7 @@ lazy-loaded dependency at instantiation time.
 
 
 ```php
+<?php
 protected function init()
 {
     // ...
@@ -224,6 +232,7 @@ Returns the value of the `$env[$key]` property (if it is set), then the value of
 values are populated at `__construct()` time.)
 
 ```php
+<?php
 protected function init()
 {
     // ...
@@ -243,6 +252,7 @@ requests for `$from` will receive an instance of `$to`.
 This can be useful for specifying default implementations for interfaces.
 
 ```php
+<?php
 $this->alias('FooInterface', 'FooImplementation');
 $instance = $this->newInstance('FooInterface'); // instanceof FooImplementation
 ```
@@ -263,6 +273,7 @@ that override the default for that class. Multiple calls to `newInstance()`
 return different new instances.
 
 ```php
+<?php
 class MyCapsule extends \Capsule\Di\AbstractContainer
 {
     public function newPdo() : PDO
@@ -278,6 +289,7 @@ This returns a shared service instance from the Capsule. Multiple calls to
 `serviceInstance()` return the same instance.
 
 ```php
+<?php
 class MyCapsule
 {
     public function getPdo() : PDO
@@ -336,6 +348,7 @@ PSR-11 is a "stringly"-typed interface. The Capsule container does not implement
 it by default, but you can do so easily.
 
 ```php
+<?php
 class Psr11Capsule implements \Psr\Container\ContainerInterface
 {
     public function get($id)
