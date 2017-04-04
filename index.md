@@ -28,14 +28,14 @@ class MyCapsule extends \Capsule\Di\AbstractContainer
     {
         parent::init();
 
-        $this->provide(\PDO::CLASS)->args(
+        $this->provide(PDO::CLASS)->args(
             $this->env('DB_DSN'),
             $this->env('DB_USERNAME'),
             $this->env('DB_PASSWORD')
         );
 
         $this->provide(MyDataMapper::CLASS)->args(
-            $this->service(\PDO::CLASS)
+            $this->service(PDO::CLASS)
         );
     }
 
@@ -47,7 +47,7 @@ class MyCapsule extends \Capsule\Di\AbstractContainer
 
 class MyDataMapper
 {
-    public function __construct(\PDO $pdo) { ... }
+    public function __construct(PDO $pdo) { ... }
 }
 
 $capsule = new MyCapsule([
@@ -236,7 +236,7 @@ values are populated at `__construct()` time.)
 protected function init()
 {
     // ...
-    $this->provide(\PDO::CLASS)->args(
+    $this->provide(PDO::CLASS)->args(
         $this->env('DB_DSN'),
         $this->env('DB_USERNAME'),
         $this->env('DB_PASSWORD')
@@ -276,9 +276,9 @@ return different new instances.
 <?php
 class MyCapsule extends \Capsule\Di\AbstractContainer
 {
-    public function newPdo() : \PDO
+    public function newPdo() : PDO
     {
-        return $this->newInstance(\PDO::CLASS);
+        return $this->newInstance(PDO::CLASS);
     }
 }
 ```
@@ -292,9 +292,9 @@ This returns a shared service instance from the Capsule. Multiple calls to
 <?php
 class MyCapsule extends \Capsule\Di\AbstractContainer
 {
-    public function getPdo() : \PDO
+    public function getPdo() : PDO
     {
-        return $this->serviceInstance(\PDO::CLASS);
+        return $this->serviceInstance(PDO::CLASS);
     }
 }
 ```
