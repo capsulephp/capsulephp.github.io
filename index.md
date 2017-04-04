@@ -47,7 +47,7 @@ class MyCapsule extends \Capsule\Di\AbstractContainer
 
 class MyDataMapper
 {
-    public function __construct(PDO $pdo) { ... }
+    public function __construct(\PDO $pdo) { ... }
 }
 
 $capsule = new MyCapsule([
