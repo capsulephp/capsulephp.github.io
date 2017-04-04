@@ -276,9 +276,9 @@ return different new instances.
 <?php
 class MyCapsule extends \Capsule\Di\AbstractContainer
 {
-    public function newPdo() : PDO
+    public function newPdo() : \PDO
     {
-        return $this->newInstance(PDO::CLASS);
+        return $this->newInstance(\PDO::CLASS);
     }
 }
 ```
@@ -290,11 +290,11 @@ This returns a shared service instance from the Capsule. Multiple calls to
 
 ```php
 <?php
-class MyCapsule
+class MyCapsule extends \Capsule\Di\AbstractContainer
 {
-    public function getPdo() : PDO
+    public function getPdo() : \PDO
     {
-        return $this->serviceInstance(PDO::CLASS);
+        return $this->serviceInstance(\PDO::CLASS);
     }
 }
 ```
@@ -349,7 +349,9 @@ it by default, but you can do so easily.
 
 ```php
 <?php
-class Psr11Capsule implements \Psr\Container\ContainerInterface
+class Psr11Capsule
+extends \Capsule\Di\AbstractContainer
+implements \Psr\Container\ContainerInterface
 {
     public function get($id)
     {
