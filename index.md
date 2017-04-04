@@ -1,4 +1,4 @@
-<img style="align: center;" src="/capsule.png" />
+<img style="align: center; border: none; width: 128px; height: 128px;" src="/capsule.png" />
 
 Most dependency injection containers work through public configuration, are
 intended for use at the application level, and use "stringly"-typed retrieval
