@@ -10,10 +10,10 @@ methods.
 component, or package level; has no public methods for configuration; and
 encourages typehinted retrieval methods.
 
-This means that you `composer require capsule/di` into your package, extend
-the `AbstractContainer` for your library or module, and `init()`-ialize your
-component objects inside that extended container. You then add typehinted
-public methods for object retrieval.
+This means that you [`composer require capsule/di`](https://packagist.org/packages/capsule/di)
+into your package, extend the `AbstractContainer` for your library or module,
+and `init()`-ialize your component objects inside that extended container. You
+then add typehinted public methods for object retrieval.
 
 ## An Example
 
