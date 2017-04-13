@@ -1,5 +1,5 @@
 <div style="text-align: center;">
-  <img style="border: none; width: 128px; height: 128px;" src="/capsule.png" />
+  <img style="border: none; width: 128px; height: 128px;" src="https://raw.githubusercontent.com/capsulephp/capsulephp.github.io/master/capsule.png" />
 </div>
 
 Most dependency injection containers work through public configuration, are
@@ -10,9 +10,10 @@ methods.
 component, or package level; has no public methods for configuration; and
 encourages typehinted retrieval methods.
 
-This means that you [`composer require capsule/di`](https://packagist.org/packages/capsule/di)
-into your package, extend the `AbstractContainer` for your library or module,
-and `init()`-ialize your component objects inside that extended container. You
+This means that you
+[`composer require capsule/di ~1.0`](https://packagist.org/packages/capsule/di)
+into your package, extend the `Container` for your library or module,
+and `__construct()` your component objects inside that extended container. You
 then add typehinted public methods for object retrieval.
 
 ## An Example
@@ -22,11 +23,11 @@ using a shared instance of PDO.
 
 ```php
 <?php
-class MyCapsule extends \Capsule\Di\AbstractContainer
+class MyCapsule extends \Capsule\Di\Container
 {
-    protected function init()
+    public function __construct(array $env = [])
     {
-        parent::init();
+        $this->setEnv($env);
 
         $this->provide(PDO::CLASS)->args(
             $this->env('DB_DSN'),
@@ -73,7 +74,7 @@ default.
 
 ```php
 <?php
-protected function init()
+public function __construct()
 {
     // ...
     $this->default(Foo::CLASS)->args(
@@ -97,7 +98,7 @@ object prior to its instantiation, overriding the class defaults.
 
 ```php
 <?php
-protected function init()
+public function __construct()
 {
     // ...
 
@@ -129,7 +130,7 @@ registered using `provide()`. (The service instance may not be defined yet.)
 
 ```php
 <?php
-protected function init()
+public function __construct()
 {
     // ...
 
@@ -146,7 +147,7 @@ a shared service instance.
 
 ```php
 <?php
-protected function init()
+public function __construct()
 {
     // ...
 
@@ -168,7 +169,7 @@ not a shared instance.
 
 ```php
 <?php
-protected function init()
+public function __construct()
 {
     // ...
 
@@ -189,7 +190,7 @@ keywords `include` and `require` are also supported.)
 
 ```php
 <?php
-protected function init()
+public function __construct()
 {
     // ...
 
@@ -209,7 +210,7 @@ lazy-loaded dependency at instantiation time.
 
 ```php
 <?php
-protected function init()
+public function __construct()
 {
     // ...
 
@@ -227,15 +228,17 @@ protected function init()
 
 ### env(*string* $key) : *mixed*
 
-Returns the value of the `$env[$key]` property (if it is set), then the value of
-`getenv($id)` (if it is not `false`), and then `null`. (The `$env` property
-values are populated at `__construct()` time.)
+Returns the value of the container-specific `$env[$key]` property (if set), then
+the value of `getenv($id)` (if not `false`), and then `null`.
 
 ```php
 <?php
-protected function init()
+public function __construct(array $env = [])
 {
+    $this->setEnv($env);
+
     // ...
+
     $this->provide(PDO::CLASS)->args(
         $this->env('DB_DSN'),
         $this->env('DB_USERNAME'),
@@ -243,6 +246,15 @@ protected function init()
     );
 }
 ```
+
+The above will use `$env['DB_DSN']` (et al.) if they are passed to the
+constructor, and fall back to `getenv('DB_DSN')` if they are not.
+
+To set or replace all container-specific environment values, call
+`setEnv(array $env)`.
+
+To merge new values with existing container-specific environment values, call
+`addEnv(array $env)`.
 
 ### alias(*string* $from, *string* $to) : *void*
 
@@ -253,8 +265,11 @@ This can be useful for specifying default implementations for interfaces.
 
 ```php
 <?php
-$this->alias('FooInterface', 'FooImplementation');
-$instance = $this->newInstance('FooInterface'); // instanceof FooImplementation
+public function __construct()
+{
+    $this->alias('FooInterface', 'FooImplementation');
+    $instance = $this->newInstance('FooInterface'); // instanceof FooImplementation
+}
 ```
 
 ## Kickoff Methods
@@ -274,7 +289,7 @@ return different new instances.
 
 ```php
 <?php
-class MyCapsule extends \Capsule\Di\AbstractContainer
+class MyCapsule extends \Capsule\Di\Container
 {
     public function newPdo() : PDO
     {
@@ -290,7 +305,7 @@ This returns a shared service instance from the Capsule. Multiple calls to
 
 ```php
 <?php
-class MyCapsule extends \Capsule\Di\AbstractContainer
+class MyCapsule extends \Capsule\Di\Container
 {
     public function getPdo() : PDO
     {
@@ -350,7 +365,7 @@ it by default, but you can do so easily.
 ```php
 <?php
 class Psr11Capsule
-extends \Capsule\Di\AbstractContainer
+extends \Capsule\Di\Container
 implements \Psr\Container\ContainerInterface
 {
     public function get($id)
