@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<meta name="HandheldFriendly" content="True"/>
+<title>Capsule 2.x</title>
+    
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/spacelab/bootstrap.min.css" />
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+<link rel="stylesheet" href="https://tobiju.github.io/share/prismjs/prism-base16-ateliersulphurpool.light.css" />
+<link rel="stylesheet" href="https://tobiju.github.io/share/prismjs/prism-linenumbers.css" />
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body data-spy="scroll" data-target="#sideNav" data-offset="50" class="bbt-theme-spacelab">
+<div class="page-wrapper">
+    <header>
+    
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="box-header container">
+        <form class="form-search navbar-form navbar-right" role="search">
+            <div class="form-group">
+                <input type="text"
+                       placeholder="Search"
+                       class="js-search-input form-control"
+                       data-roothref="/">
+
+                <div class="js-search-results"></div>
+            </div>
+        </form>
+
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#js-navbar-collapse" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+                            <a class="navbar-brand" href="/">
+                    <img alt="logo" src="/capsule.png" title="Home">
+                </a>
+                    </div>
+
+        <div class="collapse navbar-collapse" id="js-navbar-collapse">
+            
+    
+    <ul class="nav navbar-nav">
+                        <li>
+    <a href="/3.x/">Capsule 3.x</a>
+    
+    <ul class="dropdown-menu">
+                        <li>
+    <a href="/3.x/overview.html">Overview</a>
+
+    </li>
+                        <li>
+    <a href="/3.x/container.html">Container Usage</a>
+
+    </li>
+                        <li>
+    <a href="/3.x/definitions/">Definitions</a>
+    
+    <ul class="dropdown-menu">
+                        <li>
+    <a href="/3.x/definitions/overview.html">Overview</a>
+
+    </li>
+                        <li>
+    <a href="/3.x/definitions/classes.html">Class Definitions</a>
+
+    </li>
+                        <li>
+    <a href="/3.x/definitions/interfaces.html">Interface Definitions</a>
+
+    </li>
+                        <li>
+    <a href="/3.x/definitions/values.html">Primitive Values</a>
+
+    </li>
+            </ul>
+
+    </li>
+                        <li>
+    <a href="/3.x/lazy.html">Lazy Resolution</a>
+
+    </li>
+                        <li>
+    <a href="/3.x/providers.html">Definition Providers</a>
+
+    </li>
+                        <li>
+    <a href="/3.x/upgrading.html">Upgrading</a>
+
+    </li>
+            </ul>
+
+    </li>
+                        <li>
+    <a href="/2.x.html">Capsule 2.x</a>
+
+    </li>
+                        <li>
+    <a href="/1.x.html">Capsule 1.x</a>
+
+    </li>
+            </ul>
+
+        </div>
+    </div>
+</nav>
+</header>
+<div class="container">
+    <ol class="breadcrumb">
+                        <li><a href="/">Capsule</a></li>
+                                <li class="active">Capsule 2.x</li>
+            </ol>
+    <div class="row">
+
+                <div class="col-md-3">
+            <nav class="nav-left hidden-xs hidden-sm" id="sideNav">
+    <ul class="nav nav-stacked" data-spy="affix" data-offset-top="59" role="tablist">
+                                <li>
+                <a href="#2" title="Capsule&#x20;2.x">Capsule 2.x</a>
+            </li>
+                                <li>
+                <a href="#2-1" title="Example">Example</a>
+            </li>
+                                <li>
+                <a href="#2-2" title="Container&#x20;Methods">Container Methods</a>
+            </li>
+                                                                                            <li>
+                <a href="#2-3" title="Object&#x20;Definition&#x20;Methods">Object Definition Method...</a>
+            </li>
+                                                                                <li>
+                <a href="#2-4" title="Lazy&#x20;Arguments">Lazy Arguments</a>
+            </li>
+                                                                                                                                                        <li>
+                <a href="#2-5" title="Value&#x20;Definition&#x20;Methods">Value Definition Methods</a>
+            </li>
+                                <li>
+                <a href="#2-6" title="Definition&#x20;Providers">Definition Providers</a>
+            </li>
+            </ul>
+</nav>
+        </div>
+                <div class="col-md-9">
+<div id="section-main"><h1 id="2">2. Capsule 2.x</h1>
+<p>A <a href="https://www.php-fig.org/psr/psr-11/">PSR-11</a> compliant autowiring dependency
+injection container with class-based configuration of constructor arguments and
+initialization methods, and lazy evaluation of arguments. Intended primarily for
+objects, the container also makes allowance for storing non-object values.</p>
+<h2 id="2-1">2.1. Example</h2>
+<p>The following container provides a shared instance of a hypothetical data mapper
+using a shared instance of PDO.</p>
+<pre><code class="language-php">use Capsule\Di\Definitions;
+use Capsule\Di\Lazy;
+
+class DataMapper
+{
+    public function __construct(PDO $pdo)
+    {
+        $this-&gt;pdo = $pdo;
+    }
+}
+
+$def = new Definitions();
+
+$def-&gt;object(PDO::CLASS)
+    -&gt;arguments([
+        Lazy::env('PDO_DSN'),
+        Lazy::env('PDO_USERNAME'),
+        Lazy::env('PDO_PASSWORD')
+    ]);
+
+$container = $def-&gt;newContainer();
+
+$dataMapper = $container-&gt;get(DataMapper::CLASS);
+</code></pre>
+<h2 id="2-2">2.2. Container Methods</h2>
+<blockquote>
+<p>N.b.: If you use PHPStorm, you can copy the <code>resources/phpstorm.meta.php</code>
+file to your project root as <code>.phpstorm.meta.php</code> for autocompletion on
+<code>get()</code> and <code>new()</code> method calls.</p>
+</blockquote>
+<h3 id="2-2-1">2.2.1. get(<em>string</em> $id) : <em>mixed</em>
+</h3>
+<p>Returns a shared instance of the specified entry class, or the entry value.
+Multiple calls to <code>get()</code> return the same object instance.</p>
+<pre><code class="language-php">$foo1 = $container-&gt;get(Foo::CLASS);
+$foo2 = $container-&gt;get(Foo::CLASS);
+var_dump($foo1 === $foo2); // bool(true)
+</code></pre>
+<h3 id="2-2-2">2.2.2. has(<em>string</em> $id) : <em>bool</em>
+</h3>
+<p>Returns <code>true</code> if the Container has an <code>$id</code> entry, or if the <code>$id</code> is an
+existing class; otherwise, <code>false</code>.</p>
+<pre><code class="language-php">$container-&gt;has(stdClass::CLASS); // true
+$container-&gt;has('NoSuchClass'); // false
+</code></pre>
+<h3 id="2-2-3">2.2.3. new(<em>string</em> $id) : <em>mixed</em>
+</h3>
+<p>Returns a new instance of the specified entry class, or the entry value.
+Multiple calls to <code>new()</code> return different new object instances.</p>
+<pre><code class="language-php">$foo1 = $container-&gt;new(Foo::CLASS);
+$foo2 = $container-&gt;new(Foo::CLASS);
+var_dump($foo1 === $foo2); // bool(false)
+</code></pre>
+<h3 id="2-2-4">2.2.4. callableGet(<em>string</em> $id) : <em>callable</em>
+</h3>
+<p>Returns a call to <code>get()</code> wrapped in a closure. Useful for providing factories
+to other containers.</p>
+<pre><code class="language-php">$callable = $container-&gt;callableGet(Foo::CLASS);
+$foo1 = $callable();
+$foo2 = $callable();
+var_dump($foo1 === $foo2); // bool(true)
+</code></pre>
+<h3 id="2-2-5">2.2.5. callableNew(<em>string</em> $id) : <em>callable</em>
+</h3>
+<p>Returns a call to <code>new()</code> wrapped in a closure. Useful for providing factories
+to other containers.</p>
+<pre><code class="language-php">$callable = $container-&gt;callableNew(Foo::CLASS);
+$foo1 = $callable();
+$foo2 = $callable();
+var_dump($foo1 === $foo2); // bool(false)
+</code></pre>
+<h2 id="2-3">2.3. Object Definition Methods</h2>
+<p>Whereas the <em>Container</em> will create and retain objects automatically, you may
+need to define some factories and arguments for their construction. You can do
+so via the <em>Definitions</em> object.</p>
+<p>When you are done with definitions, call <code>newContainer()</code> to get back a
+fully-configured <em>Container</em> object.</p>
+<pre><code class="language-php">$def = new Definitions();
+
+// ...
+
+$container = $def-&gt;newContainer();
+</code></pre>
+<p>Specify the entry definition by <code>$id</code>; you may enter object or value
+definitions.</p>
+<pre><code class="language-php">// gets any existing definition, whether object or value.
+//
+// if the definition does not exist, it is created as via
+// $def-&gt;object(...) and returned.
+//
+// does not overwrite any previous entry.
+$def-&gt;object(Foo::CLASS)...;
+
+// define an object entry, identified by an arbitrary string.
+// replaces the previous entry identified by that string.
+$def-&gt;object('foo2', Foo::CLASS)-&gt;...;
+
+// define an object entry, identified by an arbitrary string;
+// in this case, to define the default implementation for an
+// interface.
+//
+// replaces the previous entry identified by that string.
+$def-&gt;object(FooInterface::CLASS, Foo::CLASS);
+
+// define a value entry, identified by an arbitrary string.
+// replaces the previous entry identified by that string.
+$def-&gt;value('val1', ...);
+</code></pre>
+<blockquote>
+<p>N.b.: Objects and values share the <code>$id</code> space.</p>
+</blockquote>
+<h3 id="2-3-1">2.3.1. arguments(array $arguments) : <em>Definition</em>
+</h3>
+<p>Sets all the arguments for the <code>$id</code> constructor parameters, replacing all
+previously-existing arguments for <code>$id</code>.</p>
+<p>Given this class:</p>
+<pre><code class="language-php">class Foo
+{
+    public function __construct(string $param1, string $param2)
+    {
+        // ...
+    }
+}
+</code></pre>
+<p>... you can set the constructor arguments by position like so:</p>
+<pre><code class="language-php">$def-&gt;object(Foo::CLASS)
+    -&gt;arguments([
+        'arg1',
+        'arg2'
+    ]);
+</code></pre>
+<p>Alternatively, you can set the constructor arguments by name:</p>
+<pre><code class="language-php">$def-&gt;object(Foo::CLASS)
+    -&gt;arguments([
+        'param1' =&gt; 'arg1',
+        'param2' =&gt; 'arg2'
+    ]);
+</code></pre>
+<blockquote>
+<p>N.b.: Named arguments take precedence over positional ones.</p>
+</blockquote>
+<h3 id="2-3-2">2.3.2. argument(<em>int|string</em> $parameter, <em>mixed</em> $argument) : <em>Definition</em>
+</h3>
+<p>Sets one argument for a <code>$id</code> constructor parameter by position or name,
+replacing any previously-existing argument.</p>
+<pre><code class="language-php">$def-&gt;object(Foo::CLASS)
+    -&gt;argument(0, 'arg1')
+    -&gt;argument('param2', 'arg2');
+</code></pre>
+<blockquote>
+<p>N.b.: Named arguments take precedence over positional ones.</p>
+</blockquote>
+<h3 id="2-3-3">2.3.3. factory(<em>callable</em> $callable) : <em>Definition</em>
+</h3>
+<p>Use this to set a callable factory for a <code>$id</code> (instead of letting the
+<em>Container</em> to construct it for you). The callable factory must have the
+following signature ...</p>
+<pre><code>function (Container $container)
+</code></pre>
+<p>... and may specify the return type.</p>
+<p>For example:</p>
+<pre><code class="language-php">$def-&gt;object(Foo::CLASS)
+    -&gt;factory(function (Container $container) {
+        return new Foo(); // or perform any other complex creation logic
+    });
+</code></pre>
+<p>This can be useful for defining default implementations of interfaces as well:</p>
+<pre><code class="language-php">$def-&gt;object(BarInterface::CLASS)
+    -&gt;factory(function (Container $container) : BarImplementation {
+        return new BarImplementation();
+    });
+</code></pre>
+<h3 id="2-3-4">2.3.4. method(<em>string</em> $method, ...$arguments) : <em>Definition</em>
+</h3>
+<p>Specifies methods to call on the <code>$id</code> object after it is instantiated,
+whether by <em>Container</em> itself or by a factory. Use this for setter injection,
+or for other post-instantiation initializer logic.</p>
+<p>Given this class ...</p>
+<pre><code class="language-php">class Foo
+{
+    protected $string;
+
+    public function append(string $suffix)
+    {
+        $this-&gt;string .= $suffix;
+    }
+}
+</code></pre>
+<p>... you might call these methods after instantiation:</p>
+<pre><code class="language-php">$def-&gt;object(Foo::CLASS)
+    -&gt;method('append', 'bar')
+    -&gt;method('append', 'baz');
+</code></pre>
+<h2 id="2-4">2.4. Lazy Arguments</h2>
+<p>Often you will not want to have your arguments evaluated at the time you specify
+them. For example, you may want a specify a new object instance as a constructor
+argument, but of course you don't want to instantiate that object at the moment
+of configuration; you want to instantiate it only at the moment of construction.</p>
+<p>The <em>Lazy</em> class allows for late evaluation of arguments; they are resolved only
+as the <em>Container</em> creates objects or calls methods on those objects. Use the
+<em>Lazy</em> static factory methods to create <em>Lazy</em> objects for a variety of
+purposes.</p>
+<blockquote>
+<p>N.b.: <em>Lazy</em> can be used both for constructor arguments and for <code>method()</code>
+call arguments.</p>
+</blockquote>
+<h3 id="2-4-1">2.4.1. Lazy::call(<em>callable</em> $callable) : LazyInterface</h3>
+<p>Resolves to the result returned by a <a href="https://www.php.net/callable">callable</a>;
+the callable must have this signature ...</p>
+<pre><code>function (Container $container)
+</code></pre>
+<p>... and may specify the return type.</p>
+<p>For example:</p>
+<pre><code class="language-php">$def-&gt;object(Foo::class)
+    -&gt;argument('bar', Lazy::call(
+        function (Container $container) {
+            $bar = $container-&gt;new(Bar::CLASS);
+            // do some work with $bar, then:
+            return $bar-&gt;getValue();
+        }
+    )
+);
+</code></pre>
+<h3 id="2-4-2">2.4.2. Lazy::env(<em>string</em> $varname) : LazyInterface</h3>
+<p>Resolves to the value of the <em>$varname</em> environment variable.</p>
+<pre><code class="language-php">$def-&gt;object(Foo::CLASS)
+    -&gt;argument('bar', Lazy::env('BAR'));
+
+// --&gt; return getenv('BAR');
+</code></pre>
+<h3 id="2-4-3">2.4.3. Lazy::functionCall(<em>string</em> $function, ...$arguments) : LazyInterface</h3>
+<p>Resolves to the return of a function call.</p>
+<pre><code class="language-php">$def-&gt;object(Foo::class)
+    -&gt;argument('bar', Lazy::functionCall('barfunc'));
+
+// --&gt; return barfunc();
+</code></pre>
+<blockquote>
+<p>N.b.: The <code>$arguments</code> themselves can be <em>Lazy</em> as well.</p>
+</blockquote>
+<h3 id="2-4-4">2.4.4. Lazy::get(<em>string</em> $id) : LazyInterface</h3>
+<p>Resolves to an object returned by <em>Container</em> <code>get()</code>.</p>
+<pre><code class="language-php">$def-&gt;object(Foo::CLASS)
+    -&gt;argument('bar', Lazy::get(Bar::CLASS));
+
+// --&gt; return $container-&gt;get(Bar::CLASS);
+</code></pre>
+<h3 id="2-4-5">2.4.5. Lazy::getCall(<em>string</em> $id, <em>string</em> $method, ...$arguments) : LazyInterface</h3>
+<p>Resolves to a method call on an object returned by <em>Container</em> <code>get()</code>.</p>
+<pre><code class="language-php">$def-&gt;object(Foo::CLASS)
+    -&gt;method('setBarVal', Lazy::getCall(Bar::CLASS, 'getValue'));
+
+// --&gt; return $container-&gt;get(Bar::CLASS)-&gt;getValue();
+</code></pre>
+<blockquote>
+<p>N.b.: The <code>$arguments</code> themselves can be <em>Lazy</em> as well.</p>
+</blockquote>
+<h3 id="2-4-6">2.4.6. Lazy::include(<em>string|LazyInterface</em> $file) : LazyInterface</h3>
+<p>Resolves to the result returned by including a file.</p>
+<pre><code class="language-php">$def-&gt;object(Foo::CLASS)
+    -&gt;method('setBar', Lazy::include('bar.php'));
+
+// --&gt; return include 'bar.php';
+</code></pre>
+<h3 id="2-4-7">2.4.7. Lazy::new(<em>string</em> $id) : LazyInterface</h3>
+<p>Resolves to an object returned by <em>Container</em> <code>new()</code>.</p>
+<pre><code class="language-php">$def-&gt;object(Foo::CLASS)
+    -&gt;arguments([Lazy::new(Bar::CLASS)]);
+
+// --&gt; $container-&gt;new(Bar::CLASS)
+</code></pre>
+<h3 id="2-4-8">2.4.8. Lazy::newCall(<em>string</em> $id, <em>string</em> $method, ...$arguments) : LazyInterface</h3>
+<p>Resolves to a method call on an object returned by <em>Container</em> <code>new()</code>.</p>
+<pre><code class="language-php">$def-&gt;object(Foo::CLASS)
+    -&gt;method('setBarVal', Lazy::newCall(Bar::CLASS, 'getValue'));
+
+// --&gt; $container-&gt;new(Bar::CLASS)-&gt;getValue();
+</code></pre>
+<blockquote>
+<p>N.b.: The <code>$arguments</code> themselves can be <em>Lazy</em> as well.</p>
+</blockquote>
+<h3 id="2-4-9">2.4.9. Lazy::require(<em>string|Lazy</em> $file) : LazyInterface</h3>
+<p>Resolves to the result returned by requiring a file.</p>
+<pre><code class="language-php">$def-&gt;object(Foo::CLASS)
+    -&gt;method('setBar', Lazy::require('bar.php'));
+
+// --&gt; return require 'bar.php';
+</code></pre>
+<h3 id="2-4-10">2.4.10. Lazy::staticCall(<em>string</em> $class, <em>string</em> $method, ...$arguments) : LazyInterface</h3>
+<p>Resolves to the return of a static method call.</p>
+<pre><code class="language-php">$def-&gt;object(Foo::class)
+    -&gt;argument('bar', Lazy::staticCall('Bar', 'func'));
+
+// --&gt; return Bar::func();
+</code></pre>
+<blockquote>
+<p>N.b.: The <code>$arguments</code> themselves can be <em>Lazy</em> as well.</p>
+</blockquote>
+<h2 id="2-5">2.5. Value Definition Methods</h2>
+<p>The <em>Definitions</em> object has one method to define value <code>$id</code> entries:</p>
+<pre><code class="language-php">// define the 'foo' $id entry as the string 'bar'
+$def-&gt;value('foo', 'bar');
+</code></pre>
+<p>This will replace any previously exising <code>foo</code> value, but <em>will not</em> replace a
+previously existing <code>foo</code> object; the call to <code>value()</code> will throw an exception
+in that case.</p>
+<p>Values can be any PHP value: scalar, array, resource, etc.</p>
+<h2 id="2-6">2.6. Definition Providers</h2>
+<p>You can create a series of <em>Provider</em> classes to operate on a <em>Definitions</em>
+instance. This can help to keep definition sets separate from each other, so
+you can mix-and-match them on a contextual basis.</p>
+<p>To do so, implement the <em>Provider</em> interface ...</p>
+<pre><code class="language-php">use Capsule\Di\Definitions;
+use Capsule\Di\Lazy;
+use Capsule\Di\Provider;
+
+class PdoProvider implements Provider
+{
+    public function provide(Definitions $def) : void
+    {
+        $def-&gt;object(PDO::CLASS)
+            -&gt;arguments([
+                Lazy::env('PDO_DSN'),
+                Lazy::env('PDO_USERNAME'),
+                Lazy::env('PDO_PASSWORD')
+            ]);
+    }
+}
+</code></pre>
+<p>... then pass any number of <em>Provider</em> instances to <code>ContainerFactory::new()</code>
+method:</p>
+<pre><code class="language-php">$container = ContainerFactory::new([
+    new PdoProvider(),
+]);
+</code></pre>
+<blockquote>
+<p><strong>Note:</strong></p>
+<p><code>ContainerFactory::new()</code> will take any iterable, not just an array.</p>
+</blockquote>
+<p>You can use <em>Provider</em> instances to provide definitions for:</p>
+<ul>
+<li>classes or class collections</li>
+<li>libraries or library collections</li>
+<li>packages or package collections</li>
+<li>separate layers (Domain layer, Infrastructure layer, etc)</li>
+<li>HTTP environments, CLI environments, test environments, etc</li>
+</ul>
+<p>It is up to you how you organize your providers.</p>
+</div>        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="links">
+        <div class="container">
+            <div class="row">
+                <div class="prev col-xs-6">
+                                            <a href="/3.x/upgrading.html">Previous</a>                                    </div>
+                <div class="next col-xs-6">
+                                            <a href="/1.x.html">Next</a>                                    </div>
+            </div>
+        </div>
+    </div>
+    <div id="copyright">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>Powered by <a href="https://github.com/tobiju/bookdown-bootswatch-templates" title="Visit project to generate your own docs">Bookdown Bootswatch Templates</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+</div>
+<script src="//code.jquery.com/jquery-2.2.0.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+        integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+        crossorigin="anonymous"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lunr.js/0.6.0/lunr.min.js"></script>
+<script src="//bartaz.github.io/sandbox.js/jquery.highlight.js"></script>
+<script src="//tobiju.github.io/share/prismjs/main.js"></script>
+<script src="//tobiju.github.io/share/prismjs/prism.js"></script>
+<script type="text/javascript">
+
+    function Search() {
+        this.store = {};
+        this.index = lunr(function () {
+            this.ref('id');
+            this.field('title', {boost: 10});
+            this.field('content');
+        });
+        this.searchResults = $('.js-search-results').addClass('list-search-results');
+    }
+
+    Search.prototype = {
+        constructor: Search,
+        init: function () {
+            this.createIndex();
+            this.bindEvents();
+        },
+        createIndex: function () {
+            var $this = this,
+                indexFilePath = $('.js-search-input').data('roothref') + 'index.json';
+
+            $.getJSON(indexFilePath, function (data) {
+                $.each(data, function (key, item) {
+                    $this.index.add({
+                        id: item.id,
+                        title: item.title,
+                        content: item.content
+                    });
+
+                    $this.store[item.id] = {
+                        href: item.id,
+                        title: item.title,
+                        content: item.content
+                    }
+                });
+            });
+        },
+        bindEvents: function () {
+            var $this = this;
+
+            $('html')
+                .on('click', function (event) {
+                    $this.close($(this), event);
+                });
+
+            $('.js-search-input, .js-search-results')
+                .on('click', function (event) {
+                    $this.click($(this), event);
+                });
+
+            $('.js-search-input')
+                .on('focus', function (event) {
+                    $this.focus($(this), event);
+                })
+                .on('keyup', function (event) {
+                    $this.search($(this), event)
+                })
+                .on('keydown', function (event) {
+                    if ($('.js-search-results ul').is(':visible')){
+                        $this.navigation($(this), event)
+                    }
+                })
+        },
+        click: function (element, event) {
+            event.stopPropagation();
+        },
+        focus: function (element, event) {
+            this.searchInputWidth = element.css('width');
+            element.animate({
+                'width': 600
+            }, 500);
+            $('#js-navbar-collapse > ul').fadeOut();
+        },
+        close: function (element, event) {
+            var $this = this;
+
+            $('.js-search-results').hide();
+            $('.js-search-input').animate({
+                'width': $this.searchInputWidth
+            }, 500);
+            $('#js-navbar-collapse > ul').fadeIn();
+        },
+        search: function (element, event) {
+            var $this = this;
+
+            if (event.keyCode == 13 || event.keyCode == 38 || event.keyCode == 40) {
+                return;
+            }
+
+            var query = element.val(),
+                results = $this.index.search(query);
+
+            if (!results.length) {
+                $this.searchResults.empty();
+                return;
+            }
+
+            var resultsList = results.reduce(function (ul, result) {
+                var item = $this.store[result.ref];
+                var title = $('<b>').text(item.title);
+
+                var cropText = $this.cropText(item.content, query);
+                if (cropText.length === 0) {
+                    cropText = $('<p>').html(item.content.substring(0, 120) + "...");
+                }
+                var content = content = $('<p>').html(cropText);
+
+                var div = $('<div>')
+                    .append(title)
+                    .append(content);
+                var a = $('<a>').attr('href', item.href)
+                    .append(div);
+                var li = $('<li>')
+                    .append(a);
+                ul.append(li);
+
+                return ul;
+            }, $('<ul>'));
+
+            this.searchResults.html(resultsList);
+
+            $('.js-search-results').show();
+            $(".js-search-results li:first-child").addClass('selected');
+        },
+        cropText: function (content, query) {
+            var cropedText = '',
+                re = new RegExp("\\s?(.{0,30})?" + query + ".*?\\b(.{0,30}.)?\\s?", "gi");
+
+            $.each(content.match(re), function (key, value) {
+                cropedText += '...' + value + '...';
+            });
+
+            return cropedText;
+        },
+        navigation: function (element, event) {
+            var selected = null,
+                listSelector = ".js-search-results ul",
+                listItemSelector = listSelector + " li",
+                selectedListItemSelector = listItemSelector + ".selected",
+                selectedListItemSelectorAnchor = listItemSelector + ".selected a";
+
+            // enter
+            if (event.keyCode == 13) {
+                event.preventDefault();
+                this.close();
+                window.location.replace($(selectedListItemSelectorAnchor).attr('href'));
+            }
+
+            // up
+            if (event.keyCode == 38) {
+                selected = $(selectedListItemSelector);
+                $(listItemSelector).removeClass("selected");
+
+                if (selected.prev().length == 0) {
+                    selected.siblings().last().addClass("selected");
+                } else {
+                    selected.prev().addClass("selected");
+                }
+
+                selected = $(selectedListItemSelector);
+                this.scrollListUp(selected);
+            }
+
+            // down
+            if (event.keyCode == 40) {
+                selected = $(selectedListItemSelector);
+                $(listItemSelector).removeClass("selected");
+
+                if (selected.next().length == 0) {
+                    selected.siblings().first().addClass("selected");
+                } else {
+                    selected.next().addClass("selected");
+                }
+
+                selected = $(selectedListItemSelector);
+                this.scrollListDown(selected);
+            }
+        },
+        scrollListDown: function (element) {
+            var ul = element.parent(),
+                ulHeight = ul.height(),
+                ulBottomPosition = ulHeight + ul.scrollTop(),
+                liBottomPosition = element.position().top + element.height();
+
+            if (liBottomPosition > ulBottomPosition) {
+                ul.scrollTop(liBottomPosition - ulHeight);
+            }
+
+            if (element.is(':first-child')) {
+                ul.scrollTop(0);
+            }
+        },
+        scrollListUp: function (element) {
+            var ul = element.parent(),
+                ulTopPosition = ul.scrollTop(),
+                liTopPosition = element.position().top;
+
+            if (liTopPosition < ulTopPosition) {
+                ul.scrollTop(element.position().top);
+            }
+
+            if (element.is(':last-child')) {
+                ul.scrollTop(element.position().top - element.height());
+            }
+        }
+    };
+
+    $(function () {
+        var search = new Search();
+        search.init();
+    });
+</script>
+</body>
+</html>

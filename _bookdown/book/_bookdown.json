@@ -1,0 +1,10 @@
+{
+    "title": "Capsule",
+    "content": [
+        {"3.x": "../../../di/docs/_bookdown.json"},
+        {"2.x": "https://raw.githubusercontent.com/capsulephp/di/2.x/README.md"},
+        {"1.x": "https://raw.githubusercontent.com/capsulephp/di/1.x/README.md"}
+    ],
+    "target": "../../",
+    "template": "../templates/main.php"
+}

@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<meta name="HandheldFriendly" content="True"/>
+<title>Autowiring</title>
+    
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/spacelab/bootstrap.min.css" />
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+<link rel="stylesheet" href="https://tobiju.github.io/share/prismjs/prism-base16-ateliersulphurpool.light.css" />
+<link rel="stylesheet" href="https://tobiju.github.io/share/prismjs/prism-linenumbers.css" />
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body data-spy="scroll" data-target="#sideNav" data-offset="50" class="bbt-theme-spacelab">
+<div class="page-wrapper">
+    <header>
+    
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="box-header container">
+        <form class="form-search navbar-form navbar-right" role="search">
+            <div class="form-group">
+                <input type="text"
+                       placeholder="Search"
+                       class="js-search-input form-control"
+                       data-roothref="/">
+
+                <div class="js-search-results"></div>
+            </div>
+        </form>
+
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#js-navbar-collapse" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+                            <a class="navbar-brand" href="/">
+                    <img alt="logo" src="/capsule.png" title="Home">
+                </a>
+                    </div>
+
+        <div class="collapse navbar-collapse" id="js-navbar-collapse">
+            
+    
+    <ul class="nav navbar-nav">
+                        <li>
+    <a href="/3.x/">Capsule 3.x</a>
+    
+    <ul class="dropdown-menu">
+                        <li>
+    <a href="/3.x/overview.html">Overview</a>
+
+    </li>
+                        <li>
+    <a href="/3.x/container.html">Container Usage</a>
+
+    </li>
+                        <li>
+    <a href="/3.x/definitions/">Definitions</a>
+    
+    <ul class="dropdown-menu">
+                        <li>
+    <a href="/3.x/definitions/overview.html">Overview</a>
+
+    </li>
+                        <li>
+    <a href="/3.x/definitions/classes.html">Class Definitions</a>
+
+    </li>
+                        <li>
+    <a href="/3.x/definitions/interfaces.html">Interface Definitions</a>
+
+    </li>
+                        <li>
+    <a href="/3.x/definitions/values.html">Primitive Values</a>
+
+    </li>
+            </ul>
+
+    </li>
+                        <li>
+    <a href="/3.x/lazy.html">Lazy Resolution</a>
+
+    </li>
+                        <li>
+    <a href="/3.x/providers.html">Definition Providers</a>
+
+    </li>
+            </ul>
+
+    </li>
+                        <li>
+    <a href="/2.x.html">Capsule 2.x</a>
+
+    </li>
+                        <li>
+    <a href="/1.x.html">Capsule 1.x</a>
+
+    </li>
+                        <li>
+    <a href="/examples.html">Autowiring</a>
+
+    </li>
+            </ul>
+
+        </div>
+    </div>
+</nav>
+</header>
+<div class="container">
+    <ol class="breadcrumb">
+                        <li><a href="/">Capsule</a></li>
+                                <li class="active">Autowiring</li>
+            </ol>
+    <div class="row">
+
+                <div class="col-md-3">
+            <nav class="nav-left hidden-xs hidden-sm" id="sideNav">
+    <ul class="nav nav-stacked" data-spy="affix" data-offset-top="59" role="tablist">
+                                <li>
+                <a href="#4-1" title="Autowiring">Autowiring</a>
+            </li>
+                                <li>
+                <a href="#4-2" title="Construction&#x20;Control">Construction Control</a>
+            </li>
+                                <li>
+                <a href="#4-3" title="Interface&#x20;Control">Interface Control</a>
+            </li>
+                                <li>
+                <a href="#4-4" title="Post-Construction&#x20;Control">Post-Construction Contro...</a>
+            </li>
+                                <li>
+                <a href="#4-5" title="Lazy&#x20;Resolution">Lazy Resolution</a>
+            </li>
+                                <li>
+                <a href="#4-6" title="Named&#x20;Objects&#x20;and&#x20;Values">Named Objects and Values</a>
+            </li>
+                                <li>
+                <a href="#4-7" title="Providing&#x20;Capsule&#x20;Definitions">Providing Capsule Defini...</a>
+            </li>
+            </ul>
+</nav>
+        </div>
+                <div class="col-md-9">
+<div id="section-main"><h2 id="4-1">4.1. Autowiring</h2>
+<p><em>Capsule</em> will auto-inject typehinted constructor parameters.</p>
+<pre><code class="language-php">use Capsule\Di\Container;
+use Capsule\Di\Definitions;
+
+class Foo implements FooInterface
+{
+    public function __construct(
+    	protected Bar $bar,
+    	protected string $baz = 'dib'
+    ) {
+    }
+
+    public function getBaz()
+    {
+    	return $this-&gt;baz;
+    }
+
+    public function setBaz(string $baz)
+    {
+    	$this-&gt;baz = $baz;
+    }
+
+    // ... other methods ...
+}
+
+$def = new Definitions();
+$container = new Container($def);
+
+$foo = $container-&gt;get(Foo::CLASS);
+echo $foo-&gt;getBaz(); // 'dib'
+</code></pre>
+<h2 id="4-2">4.2. Construction Control</h2>
+<p><em>Capsule</em> object and value definitions are written separately from the container
+itself.</p>
+<p>You can configure constructor arguments by position, name, or type ...</p>
+<pre><code class="language-php">$def = new Definitions();
+
+$def-&gt;{Foo::CLASS}
+	-&gt;argument('baz', 'zim');
+
+$container = new Container($def);
+
+$foo = $container-&gt;get(Foo::CLASS);
+echo $foo-&gt;getBaz(); // zim
+</code></pre>
+<p>... or you can take over construction completely using a factory callable:</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+	-&gt;factory(function (Container $container) {
+		return new Foo(new Bar(), 'irk');
+	});
+
+$container = new Container($def);
+
+$foo = $container-&gt;get(Foo::CLASS);
+echo $foo-&gt;getBaz(); // irk
+</code></pre>
+<h2 id="4-3">4.3. Interface Control</h2>
+<p>Binding an interface to an implementation is trivial ...</p>
+<pre><code class="language-php">$def-&gt;{FooInterface::CLASS}
+	-&gt;class(Foo::CLASS);
+</code></pre>
+<p>... or you can specify a factory callable over the interface:</p>
+<pre><code class="language-php">$def-&gt;{FooInterface::CLASS}
+	-&gt;factory(function (Container $container) {
+		return new Foo(new Bar())
+	});
+</code></pre>
+<h2 id="4-4">4.4. Post-Construction Control</h2>
+<p>You can call object methods after construction ...</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+	-&gt;method('setBaz', 'baz-setter');
+</code></pre>
+<p>... modify the object yourself via a callable ...</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+	-&gt;modify(function (Container $container, Foo $foo) {
+		$foo-&gt;doSomething();
+	});
+</code></pre>
+<p>... or decorate it via another callable, as you see fit:</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+	-&gt;modify(function (Container $container, Foo $foo) {
+		return new DecoratedFoo($foo);
+	});
+</code></pre>
+<p>These post-construction methods can be combined in any order any number of
+times.</p>
+<h2 id="4-5">4.5. Lazy Resolution</h2>
+<p>Anywhere you need a parameter argument, you can use a <em>Defintions</em> method to
+specify lazy-resolution for that argument.</p>
+<p>For example, reading from the environment at construction ...</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+	-&gt;argument('bar', $def-&gt;env('FOO_BAR'));
+</code></pre>
+<p>... as well as retrieving shared or new objects from the container, making
+calls to those objects after retriving them, making function or static method
+calls, invoking any other callable, or capturing the return of an included or required file.</p>
+<p>Lazy resolution can be used almost anywhere in a definition, including in
+<code>argument()</code> and  <code>method()</code> calls, as well as for primitive values.</p>
+<h2 id="4-6">4.6. Named Objects and Values</h2>
+<p>Defining named objects and primitive values is trivial:</p>
+<pre><code class="language-php">$def-&gt;{'db.host'} = $def-&gt;env('DB_HOST');
+$def-&gt;{'db.user'} = $def-&gt;env('DB_USER');
+$def-&gt;{'db.pass'} = $def-&gt;env('DB_PASS');
+
+$def-&gt;db = (new ClassDefinition(Database::CLASS)
+	-&gt;arguments([
+		'host' =&gt; $def-&gt;get('db.host'),
+		'user' =&gt; $def-&gt;get('db.user'),
+		'pass' =&gt; $def-&gt;get('db.pass')
+	]);
+</code></pre>
+<h2 id="4-7">4.7. Providing Capsule Definitions</h2>
+<p>A Capsule container can receive any number of defintion providers, each of which
+can be implemented at any layer of your system. Writing a provider implementation is straightforward:</p>
+<pre><code class="language-php">use Capsule\Di\Provider;
+use Capsule\Di\Definitions;
+
+class MyProvider implements Provider
+{
+	public function provide(Definitions $def) : void
+	{
+		// work with $def to add definitions
+	}
+}
+</code></pre>
+<p>You can then mix-and-match any providers as you like, in any iterable you like,
+when creating the Capsule container. For example, in production, you might do
+this ...</p>
+<pre><code class="language-php">$providers = [
+	new DomainProvider(),
+	new ApplicationProvider(),
+	new InfrastructureProvider(),
+	new HttpProvider(),
+];
+
+$def = new Definitions();
+
+$container = new Container($def, $providers);
+</code></pre>
+<p>... but in testing, you might alternatively provide this way instead:</p>
+<pre><code class="language-php">$providers = [
+	new DomainProvider(),
+	new ApplicationProvider(),
+	new IntegrationTestingProvider(),
+];
+</code></pre>
+</div>        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="links">
+        <div class="container">
+            <div class="row">
+                <div class="prev col-xs-6">
+                                            <a href="/1.x.html">Previous</a>                                    </div>
+                <div class="next col-xs-6">
+                                    </div>
+            </div>
+        </div>
+    </div>
+    <div id="copyright">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>Powered by <a href="https://github.com/tobiju/bookdown-bootswatch-templates" title="Visit project to generate your own docs">Bookdown Bootswatch Templates</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+</div>
+<script src="//code.jquery.com/jquery-2.2.0.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+        integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+        crossorigin="anonymous"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lunr.js/0.6.0/lunr.min.js"></script>
+<script src="//bartaz.github.io/sandbox.js/jquery.highlight.js"></script>
+<script src="//tobiju.github.io/share/prismjs/main.js"></script>
+<script src="//tobiju.github.io/share/prismjs/prism.js"></script>
+<script type="text/javascript">
+
+    function Search() {
+        this.store = {};
+        this.index = lunr(function () {
+            this.ref('id');
+            this.field('title', {boost: 10});
+            this.field('content');
+        });
+        this.searchResults = $('.js-search-results').addClass('list-search-results');
+    }
+
+    Search.prototype = {
+        constructor: Search,
+        init: function () {
+            this.createIndex();
+            this.bindEvents();
+        },
+        createIndex: function () {
+            var $this = this,
+                indexFilePath = $('.js-search-input').data('roothref') + 'index.json';
+
+            $.getJSON(indexFilePath, function (data) {
+                $.each(data, function (key, item) {
+                    $this.index.add({
+                        id: item.id,
+                        title: item.title,
+                        content: item.content
+                    });
+
+                    $this.store[item.id] = {
+                        href: item.id,
+                        title: item.title,
+                        content: item.content
+                    }
+                });
+            });
+        },
+        bindEvents: function () {
+            var $this = this;
+
+            $('html')
+                .on('click', function (event) {
+                    $this.close($(this), event);
+                });
+
+            $('.js-search-input, .js-search-results')
+                .on('click', function (event) {
+                    $this.click($(this), event);
+                });
+
+            $('.js-search-input')
+                .on('focus', function (event) {
+                    $this.focus($(this), event);
+                })
+                .on('keyup', function (event) {
+                    $this.search($(this), event)
+                })
+                .on('keydown', function (event) {
+                    if ($('.js-search-results ul').is(':visible')){
+                        $this.navigation($(this), event)
+                    }
+                })
+        },
+        click: function (element, event) {
+            event.stopPropagation();
+        },
+        focus: function (element, event) {
+            this.searchInputWidth = element.css('width');
+            element.animate({
+                'width': 600
+            }, 500);
+            $('#js-navbar-collapse > ul').fadeOut();
+        },
+        close: function (element, event) {
+            var $this = this;
+
+            $('.js-search-results').hide();
+            $('.js-search-input').animate({
+                'width': $this.searchInputWidth
+            }, 500);
+            $('#js-navbar-collapse > ul').fadeIn();
+        },
+        search: function (element, event) {
+            var $this = this;
+
+            if (event.keyCode == 13 || event.keyCode == 38 || event.keyCode == 40) {
+                return;
+            }
+
+            var query = element.val(),
+                results = $this.index.search(query);
+
+            if (!results.length) {
+                $this.searchResults.empty();
+                return;
+            }
+
+            var resultsList = results.reduce(function (ul, result) {
+                var item = $this.store[result.ref];
+                var title = $('<b>').text(item.title);
+
+                var cropText = $this.cropText(item.content, query);
+                if (cropText.length === 0) {
+                    cropText = $('<p>').html(item.content.substring(0, 120) + "...");
+                }
+                var content = content = $('<p>').html(cropText);
+
+                var div = $('<div>')
+                    .append(title)
+                    .append(content);
+                var a = $('<a>').attr('href', item.href)
+                    .append(div);
+                var li = $('<li>')
+                    .append(a);
+                ul.append(li);
+
+                return ul;
+            }, $('<ul>'));
+
+            this.searchResults.html(resultsList);
+
+            $('.js-search-results').show();
+            $(".js-search-results li:first-child").addClass('selected');
+        },
+        cropText: function (content, query) {
+            var cropedText = '',
+                re = new RegExp("\\s?(.{0,30})?" + query + ".*?\\b(.{0,30}.)?\\s?", "gi");
+
+            $.each(content.match(re), function (key, value) {
+                cropedText += '...' + value + '...';
+            });
+
+            return cropedText;
+        },
+        navigation: function (element, event) {
+            var selected = null,
+                listSelector = ".js-search-results ul",
+                listItemSelector = listSelector + " li",
+                selectedListItemSelector = listItemSelector + ".selected",
+                selectedListItemSelectorAnchor = listItemSelector + ".selected a";
+
+            // enter
+            if (event.keyCode == 13) {
+                event.preventDefault();
+                this.close();
+                window.location.replace($(selectedListItemSelectorAnchor).attr('href'));
+            }
+
+            // up
+            if (event.keyCode == 38) {
+                selected = $(selectedListItemSelector);
+                $(listItemSelector).removeClass("selected");
+
+                if (selected.prev().length == 0) {
+                    selected.siblings().last().addClass("selected");
+                } else {
+                    selected.prev().addClass("selected");
+                }
+
+                selected = $(selectedListItemSelector);
+                this.scrollListUp(selected);
+            }
+
+            // down
+            if (event.keyCode == 40) {
+                selected = $(selectedListItemSelector);
+                $(listItemSelector).removeClass("selected");
+
+                if (selected.next().length == 0) {
+                    selected.siblings().first().addClass("selected");
+                } else {
+                    selected.next().addClass("selected");
+                }
+
+                selected = $(selectedListItemSelector);
+                this.scrollListDown(selected);
+            }
+        },
+        scrollListDown: function (element) {
+            var ul = element.parent(),
+                ulHeight = ul.height(),
+                ulBottomPosition = ulHeight + ul.scrollTop(),
+                liBottomPosition = element.position().top + element.height();
+
+            if (liBottomPosition > ulBottomPosition) {
+                ul.scrollTop(liBottomPosition - ulHeight);
+            }
+
+            if (element.is(':first-child')) {
+                ul.scrollTop(0);
+            }
+        },
+        scrollListUp: function (element) {
+            var ul = element.parent(),
+                ulTopPosition = ul.scrollTop(),
+                liTopPosition = element.position().top;
+
+            if (liTopPosition < ulTopPosition) {
+                ul.scrollTop(element.position().top);
+            }
+
+            if (element.is(':last-child')) {
+                ul.scrollTop(element.position().top - element.height());
+            }
+        }
+    };
+
+    $(function () {
+        var search = new Search();
+        search.init();
+    });
+</script>
+</body>
+</html>
