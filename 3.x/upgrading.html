@@ -184,9 +184,7 @@ honored.</p>
 are "equal", with the last one set "winning."</p>
 <pre><code class="language-php">class Foo
 {
-    public $bar;
-
-    public function __construct($bar)
+    public function __construct(public string $bar)
     {
     }
 }
