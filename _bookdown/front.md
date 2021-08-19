@@ -6,6 +6,8 @@ Install _Capsule_ via [Composer](https://getcomposer.org):
 composer require capsule/di ^3.0
 ```
 
+The Github repository is at [capsulephp/di](https://github.com/capsulephp/di).
+
 ## Autowiring
 
 _Capsule_ will auto-inject typehinted constructor parameters.
