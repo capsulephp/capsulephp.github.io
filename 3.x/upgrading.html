@@ -143,10 +143,6 @@ $container = new Container(new Definitions(), $providers);
 </code></pre>
 </li>
 <li>
-<p><code>Container::new()</code> now recognizes <em>Lazy</em> value entries, and resolves them on
-each call to <code>new()</code></p>
-</li>
-<li>
 <p>Definition entries are now accessed as <em>Definitions</em> properties via <code>__get()</code>,
 not via <code>object()</code> or <code>value()</code>.</p>
 <pre><code class="language-php">// 2.x
@@ -160,7 +156,7 @@ $def-&gt;foo = 'bar';
 </li>
 <li>
 <p>Named instance/object/service definitions are likewise accessed as properties,
-and instantiated via <code>Definitions::newDefinition()</code>.</p>
+and are instantiated via <code>Definitions::newDefinition()</code>.</p>
 <pre><code class="language-php">// 2.x
 $def-&gt;object('foo', Foo::CLASS)-&gt;...;
 
@@ -197,13 +193,15 @@ are "equal", with the last one set "winning."</p>
 
 // 2.x: $foo-&gt;bar will be 'named'
 $def-&gt;object(Foo::CLASS)
-    -&gt;argument('bar', 'named');
     -&gt;argument(0, 'positional')
+    -&gt;argument('bar', 'named')
+    -&gt;argument(0, 'positional');
 
 // 3.x: $foo-&gt;bar will be 'positional'
 $def-&gt;{Foo::CLASS}
-    -&gt;argument('bar', 'named');
     -&gt;argument(0, 'positional')
+    -&gt;argument('bar', 'named')
+    -&gt;argument(0, 'positional');
 </code></pre>
 </li>
 <li>

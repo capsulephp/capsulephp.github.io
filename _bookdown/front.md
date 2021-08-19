@@ -98,7 +98,7 @@ $def->{Foo::CLASS}
 
 ```php
 $def->{Foo::CLASS}
-	->modify(function (Container $container, Foo $foo) {
+	->decorate(function (Container $container, Foo $foo) {
 		return new DecoratedFoo($foo);
 	});
 ```
