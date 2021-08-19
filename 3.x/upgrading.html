@@ -195,11 +195,11 @@ $def-&gt;object(Foo::CLASS)
     -&gt;argument('bar', 'named')
     -&gt;argument(0, 'positional');
 
-// 3.x: $foo-&gt;bar will be 'positional'
+// 3.x: $foo-&gt;bar will be 'positional again'
 $def-&gt;{Foo::CLASS}
     -&gt;argument(0, 'positional')
     -&gt;argument('bar', 'named')
-    -&gt;argument(0, 'positional');
+    -&gt;argument(0, 'positional again');
 </code></pre>
 </li>
 <li>
