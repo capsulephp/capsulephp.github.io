@@ -146,8 +146,10 @@ and quotes, like so:</p>
 <pre><code class="language-php">$def-&gt;typicalPropertyName = ...;
 $def-&gt;{'unusual.property-name'} = ...;
 </code></pre>
-<p>You can specify a class definition or an interface definition by addressing it as a property on the <em>Definitions</em> class. Doing so will create the definition if
-it does not already exist, and will reuse any previously existing definition.</p>
+<p>You can specify a class definition or an interface definition by addressing it
+as a property on the <em>Definitions</em> class. Doing so will create the definition
+if it does not already exist, and will reuse any previously existing
+definition.</p>
 <pre><code class="language-php">// a class definition
 $def-&gt;{Foo::CLASS}-&gt;...;
 
@@ -161,6 +163,12 @@ $def-&gt;{FooInterface::CLASS}-&gt;...;
 <code>newDefinition()</code> method; each new definition will be separate from every other
 definition of that class.</p>
 <pre><code class="language-php">$def-&gt;fooService = $def-&gt;newDefinition(Foo::CLASS)-&gt;...;
+</code></pre>
+<p>You can define an alias to another definition like so:</p>
+<pre><code class="language-php">// {'foo.alias'} and {Foo::CLASS} will refer to
+// the exact same definition; changing one will
+// change the other
+$def-&gt;{'foo.alias'} = $def-&gt;{Foo::CLASS};
 </code></pre>
 <p>Finally, you can check <code>isset()</code> on the <em>Definitions</em> properties and <code>unset ()</code> them if you like:</p>
 <pre><code class="language-php">if (isset($def-&gt;{Foo::CLASS})) {

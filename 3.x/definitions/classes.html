@@ -129,7 +129,7 @@
                                 <li>
                 <a href="#1-3-2-1" title="Initial&#x20;Construction">Initial Construction</a>
             </li>
-                                                                    <li>
+                                                                                                        <li>
                 <a href="#1-3-2-2" title="Extended&#x20;Construction">Extended Construction</a>
             </li>
                                                 </ul>
@@ -142,6 +142,7 @@
 order.</p>
 <h2 id="1-3-2-1">1.3.2.1. Initial Construction</h2>
 <h3 id="1-3-2-1-1">1.3.2.1.1. Constructor Arguments</h3>
+<h4 id="1-3-2-1-1-1">1.3.2.1.1.1. By Position or Name</h4>
 <p>Given this class ...</p>
 <pre><code class="language-php">class Foo
 {
@@ -181,6 +182,7 @@ argument one takes precedence over an earlier one.</strong> For example:</p>
     -&gt;argument('param0', 'named'); // $param0 is now 'named'
     -&gt;argument(0, 'positional again'); // $param0 is now 'positional again'
 </code></pre>
+<h4 id="1-3-2-1-1-2">1.3.2.1.1.2. By Typehint</h4>
 <p>You can also specify arguments by typehint. Given a class like this ...</p>
 <pre><code class="language-php">class Bar
 {
@@ -200,8 +202,25 @@ argument one takes precedence over an earlier one.</strong> For example:</p>
 </code></pre>
 <p>Specifying arguments by typehint is best combined with <em>Lazy</em> resolution,
 described elsewhere.</p>
-<p><strong>Arguments specified by name or position take precedence over arguments specified
-by typehint.</strong></p>
+<p><strong>Arguments specified by name or position take precedence over arguments
+specified by typehint.</strong></p>
+<h4 id="1-3-2-1-1-3">1.3.2.1.1.3. Variadic Arguments</h4>
+<p>If a class has a variadic constructor argument ...</p>
+<pre><code class="language-php">class Baz
+{
+    protected array $items;
+
+    public function __construct(
+        string ...$items
+    } {
+        $this-&gt;items = $items;
+    }
+}
+</code></pre>
+<p>... it must be set using an array, like so:</p>
+<pre><code class="language-php">$def-&gt;{Baz::CLASS}
+    -&gt;argument('items', ['a', 'b', 'c']);
+</code></pre>
 <h3 id="1-3-2-1-2">1.3.2.1.2. Class Overrides</h3>
 <p>If you like, you can specify an alternative class to use for instantiation
 instead of the using the definition ID as the class name. This means you can
@@ -233,7 +252,7 @@ the object yourself, instead of letting the <em>Container</em> instantiate it fo
 <p>The <code>factory()</code> may be <em>Lazy</em>:</p>
 <pre><code class="language-php">$def-&gt;{Foo::CLASS}
     -&gt;factory(
-        $def-&gt;newCall('FooFactory', 'newInstance')
+        $def-&gt;newCall(FooFactory::CLASS, 'newInstance')
     );
 </code></pre>
 <p>It can also be used to return a class that is entirely different from the
@@ -269,8 +288,8 @@ any post-construction initializer logic.</p>
     -&gt;method('wrap', 'foo', 'bar')
     -&gt;method('wrap', 'baz', 'dib');
 </code></pre>
-<p>Pass the method name as the first argument; the remaining variadic arguments
-will be passed to that method call. These arguments may be <em>Lazy</em>.</p>
+<p>Pass the method name as the first argument; the remaining arguments will be
+passed to that method call. These arguments may be <em>Lazy</em>.</p>
 <h3 id="1-3-2-2-2">1.3.2.2.2. General Modification</h3>
 <p>Sometimes <code>method()</code> calls will not be enough; you may need more complex
 modification logic. In these cases, add a <code>modify()</code> call to the definition.
@@ -280,10 +299,10 @@ Pass a callable with this signature ...</p>
 <p>... although the <code>object</code> typehint may be more specific if you like.</p>
 <p>For example:</p>
 <pre><code class="language-php">$def-&gt;{ComplexSetup::CLASS}
-    -&gt;modify(function (Container $container, ComplexSetup $object) {
+    -&gt;modify(function (Container $container, ComplexSetup $object) : void {
         // complicated setup logic, then
         $object-&gt;finalize();
-    })
+    });
 </code></pre>
 <h3 id="1-3-2-2-3">1.3.2.2.3. Decorators</h3>
 <p>Whereas <code>method()</code> and <code>modify()</code> work on the object in place, the <code>decorate()</code>
@@ -297,7 +316,7 @@ return the new object at the end of the callable.</p>
 <pre><code class="language-php">$def-&gt;{Foo::CLASS}
     -&gt;decorate(function (Container $container, Foo $foo) : DecoratedFoo {
         return new DecoratedFoo($foo);
-    })
+    });
 </code></pre>
 </div>        </div>
     </div>

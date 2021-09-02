@@ -115,7 +115,7 @@
     <div class="jumbotron jumbotron-fluid">
         <div class="container">
             <h1 class="display-1">Capsule</h1>
-            <h2 class="display-2">Clean, composable dependency injection for PHP 8.</h2>
+            <h2 class="display-2">Clean, concise, composable dependency injection for PHP 8.</h2>
 <!--
             <p class="lead">
                 Compose your definitions from providers at the packages, layers, and environments.
@@ -132,7 +132,7 @@
 <pre><code>composer require capsule/di ^3.0
 </code></pre>
 <p>The Github repository is at <a href="https://github.com/capsulephp/di">capsulephp/di</a>.</p>
-<h2>Autowiring</h2>
+<h2>Autowiring Container</h2>
 <p><em>Capsule</em> will auto-inject typehinted constructor parameters.</p>
 <pre><code class="language-php">use Capsule\Di\Container;
 use Capsule\Di\Definitions;
@@ -140,19 +140,19 @@ use Capsule\Di\Definitions;
 class Foo implements FooInterface
 {
     public function __construct(
-    	protected Bar $bar,
-    	protected string $baz = 'dib'
+        protected Bar $bar,
+        protected string $baz = 'dib'
     ) {
     }
 
     public function getBaz()
     {
-    	return $this-&gt;baz;
+        return $this-&gt;baz;
     }
 
     public function setBaz(string $baz)
     {
-    	$this-&gt;baz = $baz;
+        $this-&gt;baz = $baz;
     }
 
     // ... other methods ...
@@ -164,15 +164,16 @@ $container = new Container($def);
 $foo = $container-&gt;get(Foo::CLASS);
 echo $foo-&gt;getBaz(); // 'dib'
 </code></pre>
+<p>Learn more about the <a href="/3.x/container.html">Container</a>.</p>
 <h2>Initial Construction</h2>
-<p><em>Capsule</em> definitions are written separately from the container itself.</p>
+<p><em>Capsule</em> definitions are written separately from the <em>Container</em> itself.</p>
 <p>You can configure constructor arguments by position, name, or type ...</p>
 <pre><code class="language-php">$def = new Definitions();
 
 $def-&gt;{Foo::CLASS}
-	-&gt;arguments([
-		'baz' =&gt; 'zim'
-	]);
+    -&gt;arguments([
+        'baz' =&gt; 'zim'
+    ]);
 
 $container = new Container($def);
 
@@ -181,57 +182,61 @@ echo $foo-&gt;getBaz(); // zim
 </code></pre>
 <p>... or you can take over construction completely using a factory callable:</p>
 <pre><code class="language-php">$def-&gt;{Foo::CLASS}
-	-&gt;factory(function (Container $container) {
-		return new Foo(new Bar(), 'irk');
-	});
+    -&gt;factory(function (Container $container) {
+        return new Foo(new Bar(), 'irk');
+    });
 
 $container = new Container($def);
 
 $foo = $container-&gt;get(Foo::CLASS);
 echo $foo-&gt;getBaz(); // irk
 </code></pre>
+<p>Learn more about <a href="/3.x/definitions/classes.html">class definitions</a>.</p>
 <h2>Extended Construction</h2>
 <p>You can call object methods after construction ...</p>
 <pre><code class="language-php">$def-&gt;{Foo::CLASS}
-	-&gt;method('setBaz', 'baz-setter');
+    -&gt;method('setBaz', 'baz-setter');
 </code></pre>
 <p>... modify the object yourself via a callable ...</p>
 <pre><code class="language-php">$def-&gt;{Foo::CLASS}
-	-&gt;modify(function (Container $container, Foo $foo) {
-		$foo-&gt;doSomething();
-	});
+    -&gt;modify(function (Container $container, Foo $foo) {
+        $foo-&gt;doSomething();
+    });
 </code></pre>
 <p>... or decorate it via another callable, as you see fit:</p>
 <pre><code class="language-php">$def-&gt;{Foo::CLASS}
-	-&gt;decorate(function (Container $container, Foo $foo) {
-		return new DecoratedFoo($foo);
-	});
+    -&gt;decorate(function (Container $container, Foo $foo) {
+        return new DecoratedFoo($foo);
+    });
 </code></pre>
 <p>These post-construction methods can be combined in any order any number of
 times.</p>
+<p>Learn more about <a href="/3.x/definitions/classes.html">class definitions</a>.</p>
 <h2>Interface Implementation</h2>
 <p>Binding an interface to an implementation is trivial ...</p>
 <pre><code class="language-php">$def-&gt;{FooInterface::CLASS}
-	-&gt;class(Foo::CLASS);
+    -&gt;class(Foo::CLASS);
 </code></pre>
 <p>... or you can specify a factory callable over the interface:</p>
 <pre><code class="language-php">$def-&gt;{FooInterface::CLASS}
-	-&gt;factory(function (Container $container) {
-		return new Foo(new Bar())
-	});
+    -&gt;factory(function (Container $container) {
+        return new Foo(new Bar())
+    });
 </code></pre>
+<p>Learn more about <a href="/3.x/definitions/interfaces.html">interface definitions</a>.</p>
 <h2>Lazy Resolution</h2>
 <p>Anywhere you need a parameter argument, you can use a <em>Defintions</em> method to
 specify lazy-resolution for that argument.</p>
 <p>For example, reading from the environment at construction ...</p>
 <pre><code class="language-php">$def-&gt;{Foo::CLASS}
-	-&gt;argument('bar', $def-&gt;env('FOO_BAR'));
+    -&gt;argument('bar', $def-&gt;env('FOO_BAR'));
 </code></pre>
 <p>... as well as retrieving shared or new objects from the container, making
 calls to those objects after retriving them, making function or static method
 calls, invoking any other callable, or capturing the return of an included or required file.</p>
 <p>Lazy resolution can be used almost anywhere in a definition, including in
 <code>argument()</code> and  <code>method()</code> calls, as well as for primitive values.</p>
+<p>Learn more about <a href="/3.x/lazy.html">lazy resolution</a>.</p>
 <h2>Named Objects and Values</h2>
 <p>Defining named objects and primitive values is trivial:</p>
 <pre><code class="language-php">$def-&gt;{'db.host'} = $def-&gt;env('DB_HOST');
@@ -239,12 +244,13 @@ $def-&gt;{'db.user'} = $def-&gt;env('DB_USER');
 $def-&gt;{'db.pass'} = $def-&gt;env('DB_PASS');
 
 $def-&gt;db = $def-&gt;newDefinition(Database::CLASS)
-	-&gt;arguments([
-		'host' =&gt; $def-&gt;get('db.host'),
-		'user' =&gt; $def-&gt;get('db.user'),
-		'pass' =&gt; $def-&gt;get('db.pass')
-	]);
+    -&gt;arguments([
+        'host' =&gt; $def-&gt;get('db.host'),
+        'user' =&gt; $def-&gt;get('db.user'),
+        'pass' =&gt; $def-&gt;get('db.pass')
+    ]);
 </code></pre>
+<p>Learn more about <a href="/3.x/definitions/values.html">value definitions</a>.</p>
 <h2>Providing Capsule Definitions</h2>
 <p>A <em>Capsule</em> container can receive any number of defintion providers, each of
 which can be implemented at any layer of your system. Writing a provider
@@ -254,20 +260,20 @@ use Capsule\Di\Definitions;
 
 class MyProvider implements Provider
 {
-	public function provide(Definitions $def) : void
-	{
-		// work with $def to add definitions
-	}
+    public function provide(Definitions $def) : void
+    {
+        // work with $def to add definitions
+    }
 }
 </code></pre>
 <p>You can then compose any series of providers as you like, in any iterable you
 like, when creating the <em>Capsule</em> container. For example, in production, you
 might do this ...</p>
 <pre><code class="language-php">$providers = [
-	new DomainProvider(),
-	new ApplicationProvider(),
-	new InfrastructureProvider(),
-	new HttpProvider(),
+    new DomainProvider(),
+    new ApplicationProvider(),
+    new InfrastructureProvider(),
+    new HttpProvider(),
 ];
 
 $def = new Definitions();
@@ -276,11 +282,14 @@ $container = new Container($def, $providers);
 </code></pre>
 <p>... but in testing, you might alternatively compose your providers this way instead:</p>
 <pre><code class="language-php">$providers = [
-	new DomainProvider(),
-	new ApplicationProvider(),
-	new IntegrationTestingProvider(),
+    new DomainProvider(),
+    new ApplicationProvider(),
+    new IntegrationTestingProvider(),
 ];
 </code></pre>
+<p>Learn more about <a href="/3.x/providers.html">definition providers</a>.</p>
+<hr />
+<p>Using a previous version of Capsule? <a href="/3.x/upgrading.html">Upgrade!</a></p>
 
         </div>
         <div class="col-md-2"></div>

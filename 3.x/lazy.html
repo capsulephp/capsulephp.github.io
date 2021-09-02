@@ -129,31 +129,40 @@
                 <a href="#1-4-1" title="Environment&#x20;Variables">Environment Variables</a>
             </li>
                                 <li>
-                <a href="#1-4-2" title="Any&#x20;Callable">Any Callable</a>
+                <a href="#1-4-2" title="Comma-Separated&#x20;Environment&#x20;Variables">Comma-Separated Environm...</a>
             </li>
                                 <li>
-                <a href="#1-4-3" title="Function&#x20;Calls">Function Calls</a>
+                <a href="#1-4-3" title="Any&#x20;Callable">Any Callable</a>
             </li>
                                 <li>
-                <a href="#1-4-4" title="Static&#x20;Method&#x20;Calls">Static Method Calls</a>
+                <a href="#1-4-4" title="Function&#x20;Calls">Function Calls</a>
             </li>
                                 <li>
-                <a href="#1-4-5" title="Shared&#x20;Instances&#x20;From&#x20;The&#x20;Container">Shared Instances From Th...</a>
+                <a href="#1-4-5" title="Static&#x20;Method&#x20;Calls">Static Method Calls</a>
             </li>
                                 <li>
-                <a href="#1-4-6" title="Shared&#x20;Instance&#x20;Method&#x20;Calls">Shared Instance Method C...</a>
+                <a href="#1-4-6" title="Shared&#x20;Instances&#x20;From&#x20;The&#x20;Container">Shared Instances From Th...</a>
             </li>
                                 <li>
-                <a href="#1-4-7" title="New&#x20;Instances&#x20;From&#x20;The&#x20;Container">New Instances From The C...</a>
+                <a href="#1-4-7" title="Shared&#x20;Instance&#x20;Method&#x20;Calls">Shared Instance Method C...</a>
             </li>
                                 <li>
-                <a href="#1-4-8" title="New&#x20;Instance&#x20;Method&#x20;Calls">New Instance Method Call...</a>
+                <a href="#1-4-8" title="New&#x20;Instances&#x20;From&#x20;The&#x20;Container">New Instances From The C...</a>
             </li>
                                 <li>
-                <a href="#1-4-9" title="Included&#x20;Files">Included Files</a>
+                <a href="#1-4-9" title="New&#x20;Instance&#x20;Method&#x20;Calls">New Instance Method Call...</a>
             </li>
                                 <li>
-                <a href="#1-4-10" title="Required&#x20;Files">Required Files</a>
+                <a href="#1-4-10" title="Included&#x20;Files">Included Files</a>
+            </li>
+                                <li>
+                <a href="#1-4-11" title="Required&#x20;Files">Required Files</a>
+            </li>
+                                <li>
+                <a href="#1-4-12" title="Array&#x20;Values">Array Values</a>
+            </li>
+                                <li>
+                <a href="#1-4-13" title="Standalone&#x20;Definitions">Standalone Definitions</a>
             </li>
             </ul>
 </nav>
@@ -169,17 +178,43 @@ only at the moment of construction.</p>
 arguments via <em>Lazy</em> instances. These <em>Lazy</em> arguments are resolved only as
 the <em>Container</em> reads from the <em>Definitions</em>.</p>
 <h2 id="1-4-1">1.4.1. Environment Variables</h2>
-<p><code>env(<em>string</em> $varname) : Lazy\Env</code></p>
+<p><code>env(<em>string</em> $varname[, <em>string</em> $vartype = null]) : <em>Lazy\Env</em></code></p>
 <p>Resolves to the value of the <code>$varname</code> environment variable.</p>
 <pre><code class="language-php">$def-&gt;{Foo::CLASS}
     -&gt;argument(
         'bar',
         $def-&gt;env('BAR') // getenv('BAR')
     );
-
 </code></pre>
-<h2 id="1-4-2">1.4.2. Any Callable</h2>
-<p><code>call(<em>callable</em> $callable) : Lazy\Call</code></p>
+<p>You may optionally specify a type to cast the value to:</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;argument(
+        'bar',
+        $def-&gt;env('BAR', 'int') // (int) getenv('BAR')
+    );
+</code></pre>
+<h2 id="1-4-2">1.4.2. Comma-Separated Environment Variables</h2>
+<p><code>csEnv(<em>string</em> $varname[, <em>string</em> $vartype = null]) : <em>Lazy\CsEnv</em></code></p>
+<p>Resolves to an array of comma-separated values from the <code>$varname</code> environment
+variable. This is useful when you have to read from a list of values via an
+environment string; for example:</p>
+<pre><code>NOTIFY_EMAILS="foo@example.com,bar@example.net,baz@example.org"
+</code></pre>
+<pre><code class="language-php">$def-&gt;{Notifier::CLASS}
+    -&gt;argument(
+        'addresses',
+        $def-&gt;csEnv('NOTIFY_EMAILS') // str_getcsv(getenv('NOTIFY_EMAILS'))
+    );
+</code></pre>
+<p>You may optionally specify a type to cast all of the values to:</p>
+<pre><code class="language-php">$def-&gt;{IdList::CLASS}
+    -&gt;argument(
+        'ids',
+        $def-&gt;csEnv('ID_LIST', 'int')
+    );
+</code></pre>
+<h2 id="1-4-3">1.4.3. Any Callable</h2>
+<p><code>call(<em>callable</em> $callable) : <em>Lazy\Call</em></code></p>
 <p>Resolves to the result returned by a <a href="https://www.php.net/callable">callable</a>;
 the callable must have this signature ...</p>
 <pre><code class="language-php">function (Container $container)
@@ -198,8 +233,8 @@ the callable must have this signature ...</p>
         )
     );
 </code></pre>
-<h2 id="1-4-3">1.4.3. Function Calls</h2>
-<p><code>functionCall(<em>string</em> $function, ...$arguments) : Lazy\FunctionCall</code></p>
+<h2 id="1-4-4">1.4.4. Function Calls</h2>
+<p><code>functionCall(<em>string</em> $function, ...$arguments) : <em>Lazy\FunctionCall</em></code></p>
 <p>Resolves to the return of a function call.</p>
 <pre><code class="language-php">$def-&gt;{Foo::CLASS}
     -&gt;argument(
@@ -209,8 +244,8 @@ the callable must have this signature ...</p>
 
 </code></pre>
 <p>Any or all of the <code>$arguments</code> themselves can be <em>Lazy</em> as well.</p>
-<h2 id="1-4-4">1.4.4. Static Method Calls</h2>
-<p><code>staticCall(<em>string</em> $class, <em>string</em> $method, ...$arguments) : Lazy\StaticCall</code></p>
+<h2 id="1-4-5">1.4.5. Static Method Calls</h2>
+<p><code>staticCall(<em>string</em> $class, <em>string</em> $method, ...$arguments) : <em>Lazy\StaticCall</em></code></p>
 <p>Resolves to the return of a static method call.</p>
 <pre><code class="language-php">$def-&gt;{Foo::CLASS}
     -&gt;argument(
@@ -219,8 +254,8 @@ the callable must have this signature ...</p>
     );
 </code></pre>
 <p>Any or all of the <code>$arguments</code> themselves can be <em>Lazy</em> as well.</p>
-<h2 id="1-4-5">1.4.5. Shared Instances From The Container</h2>
-<p><code>get(<em>string</em> $id) : Lazy\Get</code></p>
+<h2 id="1-4-6">1.4.6. Shared Instances From The Container</h2>
+<p><code>get(<em>string</em> $id) : <em>Lazy\Get</em></code></p>
 <p>Resolves to an identified definition returned by <code>Container::get()</code>.</p>
 <pre><code class="language-php">$def-&gt;{Foo::CLASS}
     -&gt;argument(
@@ -228,8 +263,8 @@ the callable must have this signature ...</p>
         $def-&gt;get(Bar::CLASS) // $container-&gt;get(Bar::CLASS)
     );
 </code></pre>
-<h2 id="1-4-6">1.4.6. Shared Instance Method Calls</h2>
-<p><code>getCall(<em>string</em> $id, <em>string</em> $method, ...$arguments) : Lazy\GetCall</code></p>
+<h2 id="1-4-7">1.4.7. Shared Instance Method Calls</h2>
+<p><code>getCall(<em>string</em> $id, <em>string</em> $method, ...$arguments) : <em>Lazy\GetCall</em></code></p>
 <p>Resolves to a method call on an object returned by <code>Container::get()</code>.</p>
 <pre><code class="language-php">$def-&gt;{Foo::CLASS}
     -&gt;method(
@@ -238,7 +273,7 @@ the callable must have this signature ...</p>
     );
 </code></pre>
 <p>Any or all of the <code>$arguments</code> themselves can be <em>Lazy</em> as well.</p>
-<h2 id="1-4-7">1.4.7. New Instances From The Container</h2>
+<h2 id="1-4-8">1.4.8. New Instances From The Container</h2>
 <p><code>new(<em>string</em> $id) : Lazy\NewInstance</code></p>
 <p>Resolves to an identified definition returned by <code>Container::new()</code>.</p>
 <pre><code class="language-php">$def-&gt;{Foo::CLASS}
@@ -249,8 +284,8 @@ the callable must have this signature ...</p>
 
 // --&gt; $container-&gt;new(Bar::CLASS)
 </code></pre>
-<h2 id="1-4-8">1.4.8. New Instance Method Calls</h2>
-<p><code>newCall(<em>string</em> $id, <em>string</em> $method, ...$arguments) : Lazy\NewCall</code></p>
+<h2 id="1-4-9">1.4.9. New Instance Method Calls</h2>
+<p><code>newCall(<em>string</em> $id, <em>string</em> $method, ...$arguments) : <em>Lazy\NewCall</em></code></p>
 <p>Resolves to a method call on an object returned by <code>Container::new()</code>.</p>
 <pre><code class="language-php">$def-&gt;{Foo::CLASS}
     -&gt;method(
@@ -259,8 +294,8 @@ the callable must have this signature ...</p>
     );
 </code></pre>
 <p>Any or all of the <code>$arguments</code> themselves can be <em>Lazy</em> as well.</p>
-<h2 id="1-4-9">1.4.9. Included Files</h2>
-<p><code>include(<em>string|Lazy</em> $file) : Lazy\IncludeFile</code></p>
+<h2 id="1-4-10">1.4.10. Included Files</h2>
+<p><code>include(<em>string|Lazy</em> $file) : <em>Lazy\IncludeFile</em></code></p>
 <p>Resolves to the result returned by including a file; failure to find the file
 will not terminate execution.</p>
 <pre><code class="language-php">$def-&gt;{Foo::CLASS}
@@ -269,8 +304,8 @@ will not terminate execution.</p>
         $def-&gt;include('bar.php') // include 'bar.php'
     );
 </code></pre>
-<h2 id="1-4-10">1.4.10. Required Files</h2>
-<p><code>require(<em>string|Lazy</em> $file) : Lazy\RequireFile</code></p>
+<h2 id="1-4-11">1.4.11. Required Files</h2>
+<p><code>require(<em>string|Lazy</em> $file) : <em>Lazy\RequireFile</em></code></p>
 <p>Resolves to the result returned by requiring a file; failure to find the file
 will terminate execution.</p>
 <pre><code class="language-php">$def-&gt;{Foo::CLASS}
@@ -279,6 +314,51 @@ will terminate execution.</p>
         $def-&gt;require('bar.php') // require 'bar.php'
     );
 </code></pre>
+<h2 id="1-4-12">1.4.12. Array Values</h2>
+<p><code>array(<em>array</em> $values) : <em>Lazy\ArrayValues</em></code></p>
+<p>Resolves to an array, where each element has itself been lazy-resolved.</p>
+<p>Each element in the array will be inspected for <em>Lazy</em> resolution. This is a
+recursive inspection; if an array element is an array, that sub-array will also
+be lazy-resolved. You can mix <em>Lazy</em> and non-<em>Lazy</em> elements together in the
+array; the non-<em>Lazy</em> elements will be left as-is.</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;argument('list', $def-&gt;array([
+        $def-&gt;env('BAR'), // getenv('BAR')
+        'BAZ',
+        $def-&gt;env('DIB'), // getenv('DIB')
+    ])
+</code></pre>
+<p>The <em>ArrayValues</em> object implements <a href="https://php.net/ArrayAccess"><em>ArrayAccess</em></a>,
+<a href="https://php.net/Countable"><em>Countable</em></a>, and
+<a href="https://php.net/IteratorAggregate"><em>IteratorAggregate</em></a>, so in many cases you
+can work with it as if it is an array:</p>
+<pre><code class="language-php">$def-&gt;listing = $def-&gt;array([
+    'bar' =&gt; $def-&gt;env('BAR')
+]);
+$def-&gt;listing['baz'] = 'BAZ',
+$def-&gt;listing['dib'] = $def-&gt;env('DIB');
+
+$count = count($def-&gt;listing); // 3
+
+unset($def-&gt;listing['baz']);
+
+foreach ($def-&gt;listing as $key =&gt; $value) {
+    // ...
+}
+</code></pre>
+<h2 id="1-4-13">1.4.13. Standalone Definitions</h2>
+<p>Each definition itself is <em>Lazy</em> and will resolve to a new instance of the
+specified class as defined.</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;argument(
+        'zim',
+        $def-&gt;newDefinition(Zim::CLASS) // new Zim()
+    );
+</code></pre>
+<p>Note that this is different from resolving via the <em>Container</em> as per <code>new()</code>.
+With a standalone definition, you can specify the arguments, modifiers,
+factory, etc. separately from whatever the "default" definition is in
+the <em>Container</em>.</p>
 </div>        </div>
     </div>
 </div>
