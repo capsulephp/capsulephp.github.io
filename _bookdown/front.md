@@ -44,7 +44,8 @@ $foo = $container->get(Foo::CLASS);
 echo $foo->getBaz(); // 'dib'
 ```
 
-Learn more about the [Container](/3.x/container.html).
+Learn more about [Definitions](/3.x/definitions/overview.html)
+and the [Container](/3.x/container.html).
 
 ## Initial Construction
 
