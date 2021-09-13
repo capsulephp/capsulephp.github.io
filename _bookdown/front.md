@@ -85,7 +85,7 @@ Learn more about [class definitions](/3.x/definitions/classes.html).
 
 ## Extended Construction
 
-You can call object methods after construction ...
+You can call setter methods after construction ...
 
 ```php
 $def->{Foo::CLASS}
@@ -99,6 +99,13 @@ $def->{Foo::CLASS}
     ->modify(function (Container $container, Foo $foo) {
         $foo->doSomething();
     });
+```
+
+... inject properties on the object ...
+
+```php
+$def->{Foo::CLASS}
+    ->property('propertyName', 'injectedValue');
 ```
 
 ... or decorate it via another callable, as you see fit:

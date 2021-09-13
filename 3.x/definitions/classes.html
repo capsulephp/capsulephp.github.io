@@ -132,7 +132,7 @@
                                                                                                         <li>
                 <a href="#1-3-2-2" title="Extended&#x20;Construction">Extended Construction</a>
             </li>
-                                                </ul>
+                                                            </ul>
 </nav>
         </div>
                 <div class="col-md-9">
@@ -268,10 +268,17 @@ the typehint.</p>
 <p>These "extender" methods will be applied to the object after initial
 construction (even if that construction was by <code>factory()</code>). You can specify
 them as many times as you like, and they will be applied in that order.</p>
-<h3 id="1-3-2-2-1">1.3.2.2.1. Setters and Initializers</h3>
+<h3 id="1-3-2-2-1">1.3.2.2.1. Property Injection</h3>
+<p>To set any publicly-accessible property after construction, call the
+<code>property()</code> method with a property name and value:</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;property('propertyName', 'propValue');
+</code></pre>
+<p>The value may be <em>Lazy</em> resolvable.</p>
+<h3 id="1-3-2-2-2">1.3.2.2.2. Setter Injection</h3>
 <p>Each call to <code>method()</code> indicates a method to call on the object after it is
 instantiated. The typical case is for setter injection, but it can be used for
-any post-construction initializer logic.</p>
+any post-construction initializer logic using class methods.</p>
 <p>Given this class ...</p>
 <pre><code class="language-php">class Foo
 {
@@ -290,10 +297,12 @@ any post-construction initializer logic.</p>
 </code></pre>
 <p>Pass the method name as the first argument; the remaining arguments will be
 passed to that method call. These arguments may be <em>Lazy</em>.</p>
-<h3 id="1-3-2-2-2">1.3.2.2.2. General Modification</h3>
+<h3 id="1-3-2-2-3">1.3.2.2.3. General Modification</h3>
 <p>Sometimes <code>method()</code> calls will not be enough; you may need more complex
 modification logic. In these cases, add a <code>modify()</code> call to the definition.
-Pass a callable with this signature ...</p>
+The typical use is for modifying the obejct itself, but it can be used for any
+other kind of initializer logic.</p>
+<p>Pass a callable with this signature ...</p>
 <pre><code class="language-php">function (Container $container, object $object) : void
 </code></pre>
 <p>... although the <code>object</code> typehint may be more specific if you like.</p>
@@ -304,10 +313,10 @@ Pass a callable with this signature ...</p>
         $object-&gt;finalize();
     });
 </code></pre>
-<h3 id="1-3-2-2-3">1.3.2.2.3. Decorators</h3>
-<p>Whereas <code>method()</code> and <code>modify()</code> work on the object in place, the <code>decorate()</code>
-method allows you to return a completely different object if you like. To use
-it, pass a callable with following signature ...</p>
+<h3 id="1-3-2-2-4">1.3.2.2.4. Decorators</h3>
+<p>Whereas <code>method()</code>, <code>modify()</code>, and <code>property()</code> work on the object in place,
+the <code>decorate()</code> method allows you to return a completely different object if
+you like. To use it, pass a callable with following signature ...</p>
 <pre><code class="language-php">function (Container $container, object $object) : object
 </code></pre>
 <p>... although the <code>object</code> typehints may be more specific if you like. Be sure to
