@@ -153,16 +153,19 @@
                 <a href="#1-4-9" title="New&#x20;Instance&#x20;Method&#x20;Calls">New Instance Method Call...</a>
             </li>
                                 <li>
-                <a href="#1-4-10" title="Included&#x20;Files">Included Files</a>
+                <a href="#1-4-10" title="Callable&#x20;Factories">Callable Factories</a>
             </li>
                                 <li>
-                <a href="#1-4-11" title="Required&#x20;Files">Required Files</a>
+                <a href="#1-4-11" title="Included&#x20;Files">Included Files</a>
             </li>
                                 <li>
-                <a href="#1-4-12" title="Array&#x20;Values">Array Values</a>
+                <a href="#1-4-12" title="Required&#x20;Files">Required Files</a>
             </li>
                                 <li>
-                <a href="#1-4-13" title="Standalone&#x20;Definitions">Standalone Definitions</a>
+                <a href="#1-4-13" title="Array&#x20;Values">Array Values</a>
+            </li>
+                                <li>
+                <a href="#1-4-14" title="Standalone&#x20;Definitions">Standalone Definitions</a>
             </li>
             </ul>
 </nav>
@@ -245,7 +248,7 @@ the callable must have this signature ...</p>
 </code></pre>
 <p>Any or all of the <code>$arguments</code> themselves can be <em>Lazy</em> as well.</p>
 <h2 id="1-4-5">1.4.5. Static Method Calls</h2>
-<p><code>staticCall(<em>string</em> $class, <em>string</em> $method, ...$arguments) : <em>Lazy\StaticCall</em></code></p>
+<p><code>staticCall(<em>string|Lazy</em> $class, <em>string</em> $method, ...$arguments) : <em>Lazy\StaticCall</em></code></p>
 <p>Resolves to the return of a static method call.</p>
 <pre><code class="language-php">$def-&gt;{Foo::CLASS}
     -&gt;argument(
@@ -255,7 +258,7 @@ the callable must have this signature ...</p>
 </code></pre>
 <p>Any or all of the <code>$arguments</code> themselves can be <em>Lazy</em> as well.</p>
 <h2 id="1-4-6">1.4.6. Shared Instances From The Container</h2>
-<p><code>get(<em>string</em> $id) : <em>Lazy\Get</em></code></p>
+<p><code>get(<em>string|Lazy</em> $id) : <em>Lazy\Get</em></code></p>
 <p>Resolves to an identified definition returned by <code>Container::get()</code>.</p>
 <pre><code class="language-php">$def-&gt;{Foo::CLASS}
     -&gt;argument(
@@ -264,7 +267,7 @@ the callable must have this signature ...</p>
     );
 </code></pre>
 <h2 id="1-4-7">1.4.7. Shared Instance Method Calls</h2>
-<p><code>getCall(<em>string</em> $id, <em>string</em> $method, ...$arguments) : <em>Lazy\GetCall</em></code></p>
+<p><code>getCall(<em>string|Lazy</em> $id, <em>string</em> $method, ...$arguments) : <em>Lazy\GetCall</em></code></p>
 <p>Resolves to a method call on an object returned by <code>Container::get()</code>.</p>
 <pre><code class="language-php">$def-&gt;{Foo::CLASS}
     -&gt;method(
@@ -274,7 +277,7 @@ the callable must have this signature ...</p>
 </code></pre>
 <p>Any or all of the <code>$arguments</code> themselves can be <em>Lazy</em> as well.</p>
 <h2 id="1-4-8">1.4.8. New Instances From The Container</h2>
-<p><code>new(<em>string</em> $id) : Lazy\NewInstance</code></p>
+<p><code>new(<em>string|Lazy</em> $id) : Lazy\NewInstance</code></p>
 <p>Resolves to an identified definition returned by <code>Container::new()</code>.</p>
 <pre><code class="language-php">$def-&gt;{Foo::CLASS}
     -&gt;argument(
@@ -285,7 +288,7 @@ the callable must have this signature ...</p>
 // --&gt; $container-&gt;new(Bar::CLASS)
 </code></pre>
 <h2 id="1-4-9">1.4.9. New Instance Method Calls</h2>
-<p><code>newCall(<em>string</em> $id, <em>string</em> $method, ...$arguments) : <em>Lazy\NewCall</em></code></p>
+<p><code>newCall(<em>string|Lazy</em> $id, <em>string</em> $method, ...$arguments) : <em>Lazy\NewCall</em></code></p>
 <p>Resolves to a method call on an object returned by <code>Container::new()</code>.</p>
 <pre><code class="language-php">$def-&gt;{Foo::CLASS}
     -&gt;method(
@@ -294,7 +297,20 @@ the callable must have this signature ...</p>
     );
 </code></pre>
 <p>Any or all of the <code>$arguments</code> themselves can be <em>Lazy</em> as well.</p>
-<h2 id="1-4-10">1.4.10. Included Files</h2>
+<h2 id="1-4-10">1.4.10. Callable Factories</h2>
+<p><code>callableGet(<em>string|Lazy</em> $id) : <em>Lazy\CallableGet</em></code></p>
+<p><code>callableNew(<em>string|Lazy</em> $id) : <em>Lazy\CallableNew</em></code></p>
+<p>These resolve to a closure around <code>Container::get()</code> or <code>Container::new()</code>.
+Useful for providing factories to other containers or locators.</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;argument(
+        'bar',
+        $def-&gt;callableGet(Bar::CLASS);
+    );
+
+// function () use ($container) { return $container-&gt;get(Bar::CLASS); }
+</code></pre>
+<h2 id="1-4-11">1.4.11. Included Files</h2>
 <p><code>include(<em>string|Lazy</em> $file) : <em>Lazy\IncludeFile</em></code></p>
 <p>Resolves to the result returned by including a file; failure to find the file
 will not terminate execution.</p>
@@ -304,7 +320,7 @@ will not terminate execution.</p>
         $def-&gt;include('bar.php') // include 'bar.php'
     );
 </code></pre>
-<h2 id="1-4-11">1.4.11. Required Files</h2>
+<h2 id="1-4-12">1.4.12. Required Files</h2>
 <p><code>require(<em>string|Lazy</em> $file) : <em>Lazy\RequireFile</em></code></p>
 <p>Resolves to the result returned by requiring a file; failure to find the file
 will terminate execution.</p>
@@ -314,7 +330,7 @@ will terminate execution.</p>
         $def-&gt;require('bar.php') // require 'bar.php'
     );
 </code></pre>
-<h2 id="1-4-12">1.4.12. Array Values</h2>
+<h2 id="1-4-13">1.4.13. Array Values</h2>
 <p><code>array(<em>array</em> $values) : <em>Lazy\ArrayValues</em></code></p>
 <p>Resolves to an array, where each element has itself been lazy-resolved.</p>
 <p>Each element in the array will be inspected for <em>Lazy</em> resolution. This is a
@@ -346,7 +362,35 @@ foreach ($def-&gt;listing as $key =&gt; $value) {
     // ...
 }
 </code></pre>
-<h2 id="1-4-13">1.4.13. Standalone Definitions</h2>
+<p>Finally, to merge any <code>iterable</code> into an existing <em>ArrayValues</em> object, use its
+<code>merge()</code> method:</p>
+<pre><code class="language-php">$def-&gt;listing = $def-&gt;array([
+    'foo',
+    'bar',
+    'baz' =&gt; 'dib',
+]);
+
+$def-&gt;listing-&gt;merge([
+    'zim',
+    'gir',
+    'irk' =&gt; 'doom',
+]);
+
+/*
+$def-&gt;listing will now resolve to ...
+
+[
+    'foo',
+    'bar',
+    'baz' =&gt; 'dib',
+    'zim',
+    'gir',
+    'irk' =&gt; 'doom',
+]
+*/
+</code></pre>
+<p>The <code>merge()</code> method behaves just like <a href="https://php.net/array_merge">array_merge()</a>.</p>
+<h2 id="1-4-14">1.4.14. Standalone Definitions</h2>
 <p>Each definition itself is <em>Lazy</em> and will resolve to a new instance of the
 specified class as defined.</p>
 <pre><code class="language-php">$def-&gt;{Foo::CLASS}
