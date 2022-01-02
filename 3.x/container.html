@@ -161,7 +161,8 @@ $container = new Container($def);
 <p>... use its methods to retrieve identified objects and values.</p>
 <h2 id="1-2-1">1.2.1. Retrieving Shared Instances</h2>
 <p><code>get(<em>string</em> $id) : <em>mixed</em></code></p>
-<p>Returns a shared instance of the defined class. Multiple calls to <code>get()</code> return the same object.</p>
+<p>Returns a shared instance of the defined class. Multiple calls to <code>get()</code> return
+the same object.</p>
 <pre><code class="language-php">$foo1 = $container-&gt;get(Foo::CLASS);
 $foo2 = $container-&gt;get(Foo::CLASS);
 var_dump($foo1 === $foo2); // bool(true)
@@ -183,15 +184,16 @@ the same value. However, multiple calls to <code>new()</code> may return differe
 as the <em>Lazy</em> will be re-evaluated on each call.</p>
 <h2 id="1-2-4">1.2.4. Checking For Existence</h2>
 <p><code>has(<em>string</em> $id) : <em>bool</em></code></p>
-<p>Returns <code>true</code> if the <em>Container</em> has that identifier in its <em>Definitions</em>,
-or if the identifier is is an existing class; otherwise, <code>false</code>.</p>
+<p>Returns <code>true</code> if the <em>Container</em> can successfully <code>get()</code> or <code>new()</code> the <code>$id</code>;
+otherwise, <code>false</code>.</p>
 <pre><code class="language-php">$container-&gt;has(stdClass::CLASS); // true
 $container-&gt;has('NoSuchClass'); // false
 </code></pre>
 <h2 id="1-2-5">1.2.5. Callable Factories</h2>
 <p><code>callableGet(<em>string</em> $id) : <em>callable</em></code></p>
 <p><code>callableNew(<em>string</em> $id) : <em>callable</em></code></p>
-<p>These return a call to <code>get()</code> or <code>new()</code> wrapped in a closure. Useful for providing factories to other containers.</p>
+<p>These return a call to <code>get()</code> or <code>new()</code> wrapped in a closure. Useful for
+providing factories to other containers.</p>
 <pre><code class="language-php">$callableGet = $container-&gt;callableGet(Foo::CLASS);
 $foo1 = $callableGet();
 $foo2 = $callableGet();
