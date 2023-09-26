@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
 <meta name="HandheldFriendly" content="True"/>
-<title>Definition Providers</title>
+<title>Lazy Resolution</title>
     
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/spacelab/bootstrap.min.css" />
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
@@ -164,8 +164,8 @@
 <div class="container">
     <ol class="breadcrumb">
                         <li><a href="/">Capsule</a></li>
-                                <li><a href="/3.x/">Capsule 3.x</a></li>
-                                <li class="active">Definition Providers</li>
+                                <li><a href="/4.x/">Capsule 4.x</a></li>
+                                <li class="active">Lazy Resolution</li>
             </ol>
     <div class="row">
 
@@ -173,71 +173,284 @@
             <nav class="nav-left hidden-xs hidden-sm" id="sideNav">
     <ul class="nav nav-stacked" data-spy="affix" data-offset-top="59" role="tablist">
                                 <li>
-                <a href="#2-5" title="Definition&#x20;Providers">Definition Providers</a>
+                <a href="#1-4" title="Lazy&#x20;Resolution">Lazy Resolution</a>
+            </li>
+                                <li>
+                <a href="#1-4-1" title="Environment&#x20;Variables">Environment Variables</a>
+            </li>
+                                <li>
+                <a href="#1-4-2" title="Comma-Separated&#x20;Environment&#x20;Variables">Comma-Separated Environm...</a>
+            </li>
+                                <li>
+                <a href="#1-4-3" title="Any&#x20;Callable">Any Callable</a>
+            </li>
+                                <li>
+                <a href="#1-4-4" title="Function&#x20;Calls">Function Calls</a>
+            </li>
+                                <li>
+                <a href="#1-4-5" title="Static&#x20;Method&#x20;Calls">Static Method Calls</a>
+            </li>
+                                <li>
+                <a href="#1-4-6" title="Shared&#x20;Instances&#x20;From&#x20;The&#x20;Container">Shared Instances From Th...</a>
+            </li>
+                                <li>
+                <a href="#1-4-7" title="Shared&#x20;Instance&#x20;Method&#x20;Calls">Shared Instance Method C...</a>
+            </li>
+                                <li>
+                <a href="#1-4-8" title="New&#x20;Instances&#x20;From&#x20;The&#x20;Container">New Instances From The C...</a>
+            </li>
+                                <li>
+                <a href="#1-4-9" title="New&#x20;Instance&#x20;Method&#x20;Calls">New Instance Method Call...</a>
+            </li>
+                                <li>
+                <a href="#1-4-10" title="Callable&#x20;Factories">Callable Factories</a>
+            </li>
+                                <li>
+                <a href="#1-4-11" title="Included&#x20;Files">Included Files</a>
+            </li>
+                                <li>
+                <a href="#1-4-12" title="Required&#x20;Files">Required Files</a>
+            </li>
+                                <li>
+                <a href="#1-4-13" title="Array&#x20;Values">Array Values</a>
+            </li>
+                                <li>
+                <a href="#1-4-14" title="Standalone&#x20;Definitions">Standalone Definitions</a>
             </li>
             </ul>
 </nav>
         </div>
                 <div class="col-md-9">
-<div id="section-main"><h1 id="2-5">2.5. Definition Providers</h1>
-<p>You can create one or more <em>Provider</em> classes to work with a <em>Definitions</em>
-instance. To do so, implement the <em>Provider</em> interface ...</p>
-<pre><code class="language-php">use Capsule\Di\Definitions;
-use Capsule\Di\Provider;
+<div id="section-main"><h1 id="1-4">1.4. Lazy Resolution</h1>
+<p>Usually, you will <em>not</em> want arguments or values resolved at the time you
+specify them. For example, you may want a specify a new object instance as a
+constructor argument, but of course you don't want to instantiate that object
+at the moment of configuration. Instead, you probably want to instantiate it
+only at the moment of construction.</p>
+<p>The <em>Definitions</em> class provides methods to allow for late resolution of
+arguments via <em>Lazy</em> instances. These <em>Lazy</em> arguments are resolved only as
+the <em>Container</em> reads from the <em>Definitions</em>.</p>
+<h2 id="1-4-1">1.4.1. Environment Variables</h2>
+<p><code>env(<em>string</em> $varname[, <em>string</em> $vartype = null]) : <em>Lazy\Env</em></code></p>
+<p>Resolves to the value of the <code>$varname</code> environment variable.</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;argument(
+        'bar',
+        $def-&gt;env('BAR') // getenv('BAR')
+    );
+</code></pre>
+<p>You may optionally specify a type to cast the value to:</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;argument(
+        'bar',
+        $def-&gt;env('BAR', 'int') // (int) getenv('BAR')
+    );
+</code></pre>
+<h2 id="1-4-2">1.4.2. Comma-Separated Environment Variables</h2>
+<p><code>csEnv(<em>string</em> $varname[, <em>string</em> $vartype = null]) : <em>Lazy\CsEnv</em></code></p>
+<p>Resolves to an array of comma-separated values from the <code>$varname</code> environment
+variable. This is useful when you have to read from a list of values via an
+environment string; for example:</p>
+<pre><code>NOTIFY_EMAILS="foo@example.com,bar@example.net,baz@example.org"
+</code></pre>
+<pre><code class="language-php">$def-&gt;{Notifier::CLASS}
+    -&gt;argument(
+        'addresses',
+        $def-&gt;csEnv('NOTIFY_EMAILS') // str_getcsv(getenv('NOTIFY_EMAILS'))
+    );
+</code></pre>
+<p>You may optionally specify a type to cast all of the values to:</p>
+<pre><code class="language-php">$def-&gt;{IdList::CLASS}
+    -&gt;argument(
+        'ids',
+        $def-&gt;csEnv('ID_LIST', 'int')
+    );
+</code></pre>
+<h2 id="1-4-3">1.4.3. Any Callable</h2>
+<p><code>call(<em>callable</em> $callable) : <em>Lazy\Call</em></code></p>
+<p>Resolves to the result returned by a <a href="https://www.php.net/callable">callable</a>;
+the callable must have this signature ...</p>
+<pre><code class="language-php">function (Container $container)
+</code></pre>
+<p>... and may specify the return type.</p>
+<p>For example:</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;argument(
+        'bar',
+        $def-&gt;call(
+            function (Container $container) {
+                $bar = $container-&gt;new(Bar::CLASS);
+                // do some work with $bar, then:
+                return $bar-&gt;getValue();
+            }
+        )
+    );
+</code></pre>
+<h2 id="1-4-4">1.4.4. Function Calls</h2>
+<p><code>functionCall(<em>string</em> $function, ...$arguments) : <em>Lazy\FunctionCall</em></code></p>
+<p>Resolves to the return of a function call.</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;argument(
+        'bar',
+        $def-&gt;functionCall('barfunc') // barfunc()
+    );
 
-class PdoProvider implements Provider
-{
-    public function provide(Definitions $def) : void
-    {
-        $def-&gt;{PDO::CLASS}
-            -&gt;arguments([
-                $def-&gt;env('PDO_DSN'),
-                $def-&gt;env('PDO_USERNAME'),
-                $def-&gt;env('PDO_PASSWORD')
-            ]);
-    }
+</code></pre>
+<p>Any or all of the <code>$arguments</code> themselves can be <em>Lazy</em> as well.</p>
+<h2 id="1-4-5">1.4.5. Static Method Calls</h2>
+<p><code>staticCall(<em>string|Lazy</em> $class, <em>string</em> $method, ...$arguments) : <em>Lazy\StaticCall</em></code></p>
+<p>Resolves to the return of a static method call.</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;argument(
+        'bar',
+        $def-&gt;staticCall('Bar', 'func') // Bar::func()
+    );
+</code></pre>
+<p>Any or all of the <code>$arguments</code> themselves can be <em>Lazy</em> as well.</p>
+<h2 id="1-4-6">1.4.6. Shared Instances From The Container</h2>
+<p><code>get(<em>string|Lazy</em> $id) : <em>Lazy\Get</em></code></p>
+<p>Resolves to an identified definition returned by <code>Container::get()</code>.</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;argument(
+        'bar',
+        $def-&gt;get(Bar::CLASS) // $container-&gt;get(Bar::CLASS)
+    );
+</code></pre>
+<h2 id="1-4-7">1.4.7. Shared Instance Method Calls</h2>
+<p><code>getCall(<em>string|Lazy</em> $id, <em>string</em> $method, ...$arguments) : <em>Lazy\GetCall</em></code></p>
+<p>Resolves to a method call on an object returned by <code>Container::get()</code>.</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;method(
+        'setBarVal',
+        $def-&gt;getCall(Bar::CLASS, 'getValue') // $container-&gt;get(Bar::CLASS)-&gt;getValue()
+    );
+</code></pre>
+<p>Any or all of the <code>$arguments</code> themselves can be <em>Lazy</em> as well.</p>
+<h2 id="1-4-8">1.4.8. New Instances From The Container</h2>
+<p><code>new(<em>string|Lazy</em> $id) : Lazy\NewInstance</code></p>
+<p>Resolves to an identified definition returned by <code>Container::new()</code>.</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;argument(
+        'bar',
+        $def-&gt;new(Bar::CLASS) // $container-&gt;new(Bar::CLASS)
+    );
+</code></pre>
+<h2 id="1-4-9">1.4.9. New Instance Method Calls</h2>
+<p><code>newCall(<em>string|Lazy</em> $id, <em>string</em> $method, ...$arguments) : <em>Lazy\NewCall</em></code></p>
+<p>Resolves to a method call on an object returned by <code>Container::new()</code>.</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;method(
+        'setBarVal',
+        $def-&gt;newCall(Bar::CLASS, 'getValue') // $container-&gt;new(Bar::CLASS)-&gt;getValue()
+    );
+</code></pre>
+<p>Any or all of the <code>$arguments</code> themselves can be <em>Lazy</em> as well.</p>
+<h2 id="1-4-10">1.4.10. Callable Factories</h2>
+<p><code>callableGet(<em>string|Lazy</em> $id) : <em>Lazy\CallableGet</em></code></p>
+<p><code>callableNew(<em>string|Lazy</em> $id) : <em>Lazy\CallableNew</em></code></p>
+<p>These resolve to a closure around <code>Container::get()</code> or <code>Container::new()</code>.
+Useful for providing factories to other containers or locators.</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;argument(
+        'bar',
+        $def-&gt;callableGet(Bar::CLASS);
+    );
+
+// function () use ($container) { return $container-&gt;get(Bar::CLASS); }
+</code></pre>
+<h2 id="1-4-11">1.4.11. Included Files</h2>
+<p><code>include(<em>string|Lazy</em> $file) : <em>Lazy\IncludeFile</em></code></p>
+<p>Resolves to the result returned by including a file; failure to find the file
+will not terminate execution.</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;method(
+        'setBar',
+        $def-&gt;include('bar.php') // include 'bar.php'
+    );
+</code></pre>
+<h2 id="1-4-12">1.4.12. Required Files</h2>
+<p><code>require(<em>string|Lazy</em> $file) : <em>Lazy\RequireFile</em></code></p>
+<p>Resolves to the result returned by requiring a file; failure to find the file
+will terminate execution.</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;method(
+        'setBar',
+        $def-&gt;require('bar.php') // require 'bar.php'
+    );
+</code></pre>
+<h2 id="1-4-13">1.4.13. Array Values</h2>
+<p><code>array(<em>array</em> $values) : <em>Lazy\ArrayValues</em></code></p>
+<p>Resolves to an array, where each element has itself been lazy-resolved.</p>
+<p>Each element in the array will be inspected for <em>Lazy</em> resolution. This is a
+recursive inspection; if an array element is an array, that sub-array will also
+be lazy-resolved. You can mix <em>Lazy</em> and non-<em>Lazy</em> elements together in the
+array; the non-<em>Lazy</em> elements will be left as-is.</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;argument('list', $def-&gt;array([
+        $def-&gt;env('BAR'), // getenv('BAR')
+        'BAZ',
+        $def-&gt;env('DIB'), // getenv('DIB')
+    ])
+</code></pre>
+<p>The <em>ArrayValues</em> object implements <a href="https://php.net/ArrayAccess"><em>ArrayAccess</em></a>,
+<a href="https://php.net/Countable"><em>Countable</em></a>, and
+<a href="https://php.net/IteratorAggregate"><em>IteratorAggregate</em></a>, so in many cases you
+can work with it as if it is an array:</p>
+<pre><code class="language-php">$def-&gt;listing = $def-&gt;array([
+    'bar' =&gt; $def-&gt;env('BAR')
+]);
+$def-&gt;listing['baz'] = 'BAZ',
+$def-&gt;listing['dib'] = $def-&gt;env('DIB');
+
+$count = count($def-&gt;listing); // 3
+
+unset($def-&gt;listing['baz']);
+
+foreach ($def-&gt;listing as $key =&gt; $value) {
+    // ...
 }
 </code></pre>
-<p>... then pass an iterable of <em>Provider</em> instances to a new <em>Container</em>:</p>
-<pre><code class="language-php">$providers = [
-    new PdoProvider(),
-];
+<p>Finally, to merge any <code>iterable</code> into an existing <em>ArrayValues</em> object, use its
+<code>merge()</code> method:</p>
+<pre><code class="language-php">$def-&gt;listing = $def-&gt;array([
+    'foo',
+    'bar',
+    'baz' =&gt; 'dib',
+]);
 
-$container = new Container(
-    new Definitions(),
-    $providers
-);
+$def-&gt;listing-&gt;merge([
+    'zim',
+    'gir',
+    'irk' =&gt; 'doom',
+]);
+
+/*
+$def-&gt;listing will now resolve to ...
+
+[
+    'foo',
+    'bar',
+    'baz' =&gt; 'dib',
+    'zim',
+    'gir',
+    'irk' =&gt; 'doom',
+]
+*/
 </code></pre>
-<p>The <code>$providers</code> may be any <em>iterable</em> of <em>Provider</em> instances, not just an
-array.</p>
-<p>You can use <em>Provider</em> instances for definitions organized by:</p>
-<ul>
-<li>classes or class collections</li>
-<li>libraries or library collections</li>
-<li>packages or package collections</li>
-<li>HTTP or command line interfaces</li>
-<li>Development, test, or production environments</li>
-</ul>
-<p>It is up to you how you organize your <em>Provider</em> instances. For example, you
-may organize them by DDD and environment layers, like so:</p>
-<pre><code class="language-php">$providers = [
-    new DomainLayerProvider(),
-    new ApplicatonLayerProvider(),
-    new InfrastructureLayerProvider(),
-    new HttpLayerProvider(),
-    new ProductionEnvironmentProvider(),
-];
+<p>The <code>merge()</code> method behaves just like <a href="https://php.net/array_merge">array_merge()</a>.</p>
+<h2 id="1-4-14">1.4.14. Standalone Definitions</h2>
+<p>Each definition itself is <em>Lazy</em> and will resolve to a new instance of the
+specified class as defined.</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;argument(
+        'zim',
+        $def-&gt;newDefinition(Zim::CLASS) // new Zim()
+    );
 </code></pre>
-<p>You may wish to make your <em>Provider</em> instances mixable in various combinations,
-so you can reuse "lower" or "inner" definitions in concert with "higher"
-or "outer" definitions. For example, reusing some core definitions in a
-different environment:</p>
-<pre><code class="language-php">$providers = [
-    new DomainLayerProvider(),
-    new ApplicatonLayerProvider(),
-    new IntegrationTestingProvider(),
-];
-</code></pre>
+<p>Note that this is different from resolving via the <em>Container</em> as per <code>new()</code>.
+With a standalone definition, you can specify the arguments, modifiers,
+factory, etc. separately from whatever the "default" definition is in
+the <em>Container</em>.</p>
 </div>        </div>
     </div>
 </div>
@@ -247,9 +460,9 @@ different environment:</p>
         <div class="container">
             <div class="row">
                 <div class="prev col-xs-6">
-                                            <a href="/3.x/lazy.html">Previous</a>                                    </div>
+                                            <a href="/4.x/definitions/values.html">Previous</a>                                    </div>
                 <div class="next col-xs-6">
-                                            <a href="/3.x/upgrading.html">Next</a>                                    </div>
+                                            <a href="/4.x/providers.html">Next</a>                                    </div>
             </div>
         </div>
     </div>

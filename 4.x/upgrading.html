@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
 <meta name="HandheldFriendly" content="True"/>
-<title>Definition Providers</title>
+<title>Upgrading</title>
     
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/spacelab/bootstrap.min.css" />
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
@@ -164,8 +164,8 @@
 <div class="container">
     <ol class="breadcrumb">
                         <li><a href="/">Capsule</a></li>
-                                <li><a href="/3.x/">Capsule 3.x</a></li>
-                                <li class="active">Definition Providers</li>
+                                <li><a href="/4.x/">Capsule 4.x</a></li>
+                                <li class="active">Upgrading</li>
             </ol>
     <div class="row">
 
@@ -173,71 +173,27 @@
             <nav class="nav-left hidden-xs hidden-sm" id="sideNav">
     <ul class="nav nav-stacked" data-spy="affix" data-offset-top="59" role="tablist">
                                 <li>
-                <a href="#2-5" title="Definition&#x20;Providers">Definition Providers</a>
+                <a href="#1-6" title="Upgrading">Upgrading</a>
             </li>
             </ul>
 </nav>
         </div>
                 <div class="col-md-9">
-<div id="section-main"><h1 id="2-5">2.5. Definition Providers</h1>
-<p>You can create one or more <em>Provider</em> classes to work with a <em>Definitions</em>
-instance. To do so, implement the <em>Provider</em> interface ...</p>
-<pre><code class="language-php">use Capsule\Di\Definitions;
-use Capsule\Di\Provider;
-
-class PdoProvider implements Provider
-{
-    public function provide(Definitions $def) : void
-    {
-        $def-&gt;{PDO::CLASS}
-            -&gt;arguments([
-                $def-&gt;env('PDO_DSN'),
-                $def-&gt;env('PDO_USERNAME'),
-                $def-&gt;env('PDO_PASSWORD')
-            ]);
-    }
-}
-</code></pre>
-<p>... then pass an iterable of <em>Provider</em> instances to a new <em>Container</em>:</p>
-<pre><code class="language-php">$providers = [
-    new PdoProvider(),
-];
-
-$container = new Container(
-    new Definitions(),
-    $providers
-);
-</code></pre>
-<p>The <code>$providers</code> may be any <em>iterable</em> of <em>Provider</em> instances, not just an
-array.</p>
-<p>You can use <em>Provider</em> instances for definitions organized by:</p>
+<div id="section-main"><h1 id="1-6">1.6. Upgrading</h1>
+<p>Upgrading from 3.x to 4.x should be trivial. The public API is identical;
+other changes include:</p>
 <ul>
-<li>classes or class collections</li>
-<li>libraries or library collections</li>
-<li>packages or package collections</li>
-<li>HTTP or command line interfaces</li>
-<li>Development, test, or production environments</li>
+<li>
+<p>PHP 8.1 is the minimum required version.</p>
+</li>
+<li>
+<p>The <code>Definition::property()</code> method now injects the property
+value <strong>before</strong> object construction, not after, and will work on any
+property, not just public properties. To get the old behavior of injecting
+a public property after construction, use the <code>Definition::modify()</code> method
+to set the property directly on the object.</p>
+</li>
 </ul>
-<p>It is up to you how you organize your <em>Provider</em> instances. For example, you
-may organize them by DDD and environment layers, like so:</p>
-<pre><code class="language-php">$providers = [
-    new DomainLayerProvider(),
-    new ApplicatonLayerProvider(),
-    new InfrastructureLayerProvider(),
-    new HttpLayerProvider(),
-    new ProductionEnvironmentProvider(),
-];
-</code></pre>
-<p>You may wish to make your <em>Provider</em> instances mixable in various combinations,
-so you can reuse "lower" or "inner" definitions in concert with "higher"
-or "outer" definitions. For example, reusing some core definitions in a
-different environment:</p>
-<pre><code class="language-php">$providers = [
-    new DomainLayerProvider(),
-    new ApplicatonLayerProvider(),
-    new IntegrationTestingProvider(),
-];
-</code></pre>
 </div>        </div>
     </div>
 </div>
@@ -247,9 +203,9 @@ different environment:</p>
         <div class="container">
             <div class="row">
                 <div class="prev col-xs-6">
-                                            <a href="/3.x/lazy.html">Previous</a>                                    </div>
+                                            <a href="/4.x/providers.html">Previous</a>                                    </div>
                 <div class="next col-xs-6">
-                                            <a href="/3.x/upgrading.html">Next</a>                                    </div>
+                                            <a href="/3.x/">Next</a>                                    </div>
             </div>
         </div>
     </div>

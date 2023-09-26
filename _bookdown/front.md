@@ -3,7 +3,7 @@
 Install _Capsule_ via [Composer](https://getcomposer.org):
 
 ```
-composer require capsule/di ^3.0
+composer require capsule/di ^4.0
 ```
 
 The Github repository is at [capsulephp/di](https://github.com/capsulephp/di).
@@ -44,8 +44,8 @@ $foo = $container->get(Foo::CLASS);
 echo $foo->getBaz(); // 'dib'
 ```
 
-Learn more about [Definitions](/3.x/definitions/overview.html)
-and the [Container](/3.x/container.html).
+Learn more about [Definitions](/4.x/definitions/overview.html)
+and the [Container](/4.x/container.html).
 
 ## Initial Construction
 
@@ -81,9 +81,20 @@ $foo = $container->get(Foo::CLASS);
 echo $foo->getBaz(); // irk
 ```
 
-Learn more about [class definitions](/3.x/definitions/classes.html).
+Learn more about [class definitions](/4.x/definitions/classes.html).
 
-## Extended Construction
+## Pre-Construction
+
+You can inject properties (whether public, protected, or private) into the object before the constructor is called:
+
+```php
+$def->{Foo::CLASS}
+    ->property('propertyName', 'injectedValue');
+```
+
+Learn more about [class definitions](/4.x/definitions/classes.html).
+
+## Post-Construction
 
 You can call setter methods after construction ...
 
@@ -101,13 +112,6 @@ $def->{Foo::CLASS}
     });
 ```
 
-... inject properties on the object ...
-
-```php
-$def->{Foo::CLASS}
-    ->property('propertyName', 'injectedValue');
-```
-
 ... or decorate it via another callable, as you see fit:
 
 ```php
@@ -120,7 +124,7 @@ $def->{Foo::CLASS}
 These post-construction methods can be combined in any order any number of
 times.
 
-Learn more about [class definitions](/3.x/definitions/classes.html).
+Learn more about [class definitions](/4.x/definitions/classes.html).
 
 ## Interface Implementation
 
@@ -140,7 +144,7 @@ $def->{FooInterface::CLASS}
     });
 ```
 
-Learn more about [interface definitions](/3.x/definitions/interfaces.html).
+Learn more about [interface definitions](/4.x/definitions/interfaces.html).
 
 
 ## Lazy Resolution
@@ -162,7 +166,7 @@ calls, invoking any other callable, or capturing the return of an included or re
 Lazy resolution can be used almost anywhere in a definition, including in
 `argument()` and  `method()` calls, as well as for primitive values.
 
-Learn more about [lazy resolution](/3.x/lazy.html).
+Learn more about [lazy resolution](/4.x/lazy.html).
 
 ## Named Objects and Values
 
@@ -181,7 +185,7 @@ $def->db = $def->newDefinition(Database::CLASS)
     ]);
 ```
 
-Learn more about [value definitions](/3.x/definitions/values.html).
+Learn more about [value definitions](/4.x/definitions/values.html).
 
 ## Providing Capsule Definitions
 
@@ -229,8 +233,8 @@ $providers = [
 ];
 ```
 
-Learn more about [definition providers](/3.x/providers.html).
+Learn more about [definition providers](/4.x/providers.html).
 
 * * *
 
-Using a previous version of Capsule? [Upgrade!](/3.x/upgrading.html)
+Using a previous version of Capsule? [Upgrade!](/4.x/upgrading.html)

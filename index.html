@@ -48,6 +48,56 @@
     
     <ul class="nav navbar-nav">
                         <li>
+    <a href="/4.x/">Capsule 4.x</a>
+    
+    <ul class="dropdown-menu">
+                        <li>
+    <a href="/4.x/overview.html">Overview</a>
+
+    </li>
+                        <li>
+    <a href="/4.x/container.html">Container Usage</a>
+
+    </li>
+                        <li>
+    <a href="/4.x/definitions/">Definitions</a>
+    
+    <ul class="dropdown-menu">
+                        <li>
+    <a href="/4.x/definitions/overview.html">Overview</a>
+
+    </li>
+                        <li>
+    <a href="/4.x/definitions/classes.html">Class Definitions</a>
+
+    </li>
+                        <li>
+    <a href="/4.x/definitions/interfaces.html">Interface Definitions</a>
+
+    </li>
+                        <li>
+    <a href="/4.x/definitions/values.html">Primitive Values</a>
+
+    </li>
+            </ul>
+
+    </li>
+                        <li>
+    <a href="/4.x/lazy.html">Lazy Resolution</a>
+
+    </li>
+                        <li>
+    <a href="/4.x/providers.html">Definition Providers</a>
+
+    </li>
+                        <li>
+    <a href="/4.x/upgrading.html">Upgrading</a>
+
+    </li>
+            </ul>
+
+    </li>
+                        <li>
     <a href="/3.x/">Capsule 3.x</a>
     
     <ul class="dropdown-menu">
@@ -129,7 +179,7 @@
         <div class="col-md-8">
             <h2>Installation</h2>
 <p>Install <em>Capsule</em> via <a href="https://getcomposer.org">Composer</a>:</p>
-<pre><code>composer require capsule/di ^3.0
+<pre><code>composer require capsule/di ^4.0
 </code></pre>
 <p>The Github repository is at <a href="https://github.com/capsulephp/di">capsulephp/di</a>.</p>
 <h2>Autowiring Container</h2>
@@ -164,8 +214,8 @@ $container = new Container($def);
 $foo = $container-&gt;get(Foo::CLASS);
 echo $foo-&gt;getBaz(); // 'dib'
 </code></pre>
-<p>Learn more about <a href="/3.x/definitions/overview.html">Definitions</a>
-and the <a href="/3.x/container.html">Container</a>.</p>
+<p>Learn more about <a href="/4.x/definitions/overview.html">Definitions</a>
+and the <a href="/4.x/container.html">Container</a>.</p>
 <h2>Initial Construction</h2>
 <p><em>Capsule</em> definitions are written separately from the <em>Container</em> itself.</p>
 <p>You can configure constructor arguments by position, name, or type ...</p>
@@ -192,8 +242,14 @@ $container = new Container($def);
 $foo = $container-&gt;get(Foo::CLASS);
 echo $foo-&gt;getBaz(); // irk
 </code></pre>
-<p>Learn more about <a href="/3.x/definitions/classes.html">class definitions</a>.</p>
-<h2>Extended Construction</h2>
+<p>Learn more about <a href="/4.x/definitions/classes.html">class definitions</a>.</p>
+<h2>Pre-Construction</h2>
+<p>You can inject properties (whether public, protected, or private) into the object before the constructor is called:</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;property('propertyName', 'injectedValue');
+</code></pre>
+<p>Learn more about <a href="/4.x/definitions/classes.html">class definitions</a>.</p>
+<h2>Post-Construction</h2>
 <p>You can call setter methods after construction ...</p>
 <pre><code class="language-php">$def-&gt;{Foo::CLASS}
     -&gt;method('setBaz', 'baz-setter');
@@ -204,10 +260,6 @@ echo $foo-&gt;getBaz(); // irk
         $foo-&gt;doSomething();
     });
 </code></pre>
-<p>... inject properties on the object ...</p>
-<pre><code class="language-php">$def-&gt;{Foo::CLASS}
-    -&gt;property('propertyName', 'injectedValue');
-</code></pre>
 <p>... or decorate it via another callable, as you see fit:</p>
 <pre><code class="language-php">$def-&gt;{Foo::CLASS}
     -&gt;decorate(function (Container $container, Foo $foo) {
@@ -216,7 +268,7 @@ echo $foo-&gt;getBaz(); // irk
 </code></pre>
 <p>These post-construction methods can be combined in any order any number of
 times.</p>
-<p>Learn more about <a href="/3.x/definitions/classes.html">class definitions</a>.</p>
+<p>Learn more about <a href="/4.x/definitions/classes.html">class definitions</a>.</p>
 <h2>Interface Implementation</h2>
 <p>Binding an interface to an implementation is trivial ...</p>
 <pre><code class="language-php">$def-&gt;{FooInterface::CLASS}
@@ -228,7 +280,7 @@ times.</p>
         return new Foo(new Bar())
     });
 </code></pre>
-<p>Learn more about <a href="/3.x/definitions/interfaces.html">interface definitions</a>.</p>
+<p>Learn more about <a href="/4.x/definitions/interfaces.html">interface definitions</a>.</p>
 <h2>Lazy Resolution</h2>
 <p>Anywhere you need a parameter argument, you can use a <em>Defintions</em> method to
 specify lazy-resolution for that argument.</p>
@@ -241,7 +293,7 @@ calls to those objects after retriving them, making function or static method
 calls, invoking any other callable, or capturing the return of an included or required file.</p>
 <p>Lazy resolution can be used almost anywhere in a definition, including in
 <code>argument()</code> and  <code>method()</code> calls, as well as for primitive values.</p>
-<p>Learn more about <a href="/3.x/lazy.html">lazy resolution</a>.</p>
+<p>Learn more about <a href="/4.x/lazy.html">lazy resolution</a>.</p>
 <h2>Named Objects and Values</h2>
 <p>Defining named objects and primitive values is trivial:</p>
 <pre><code class="language-php">$def-&gt;{'db.host'} = $def-&gt;env('DB_HOST');
@@ -255,7 +307,7 @@ $def-&gt;db = $def-&gt;newDefinition(Database::CLASS)
         'pass' =&gt; $def-&gt;get('db.pass')
     ]);
 </code></pre>
-<p>Learn more about <a href="/3.x/definitions/values.html">value definitions</a>.</p>
+<p>Learn more about <a href="/4.x/definitions/values.html">value definitions</a>.</p>
 <h2>Providing Capsule Definitions</h2>
 <p>A <em>Capsule</em> container can receive any number of defintion providers, each of
 which can be implemented at any layer of your system. Writing a provider
@@ -292,9 +344,9 @@ $container = new Container($def, $providers);
     new IntegrationTestingProvider(),
 ];
 </code></pre>
-<p>Learn more about <a href="/3.x/providers.html">definition providers</a>.</p>
+<p>Learn more about <a href="/4.x/providers.html">definition providers</a>.</p>
 <hr />
-<p>Using a previous version of Capsule? <a href="/3.x/upgrading.html">Upgrade!</a></p>
+<p>Using a previous version of Capsule? <a href="/4.x/upgrading.html">Upgrade!</a></p>
 
         </div>
         <div class="col-md-2"></div>

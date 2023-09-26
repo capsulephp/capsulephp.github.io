@@ -48,6 +48,56 @@
     
     <ul class="nav navbar-nav">
                         <li>
+    <a href="/4.x/">Capsule 4.x</a>
+    
+    <ul class="dropdown-menu">
+                        <li>
+    <a href="/4.x/overview.html">Overview</a>
+
+    </li>
+                        <li>
+    <a href="/4.x/container.html">Container Usage</a>
+
+    </li>
+                        <li>
+    <a href="/4.x/definitions/">Definitions</a>
+    
+    <ul class="dropdown-menu">
+                        <li>
+    <a href="/4.x/definitions/overview.html">Overview</a>
+
+    </li>
+                        <li>
+    <a href="/4.x/definitions/classes.html">Class Definitions</a>
+
+    </li>
+                        <li>
+    <a href="/4.x/definitions/interfaces.html">Interface Definitions</a>
+
+    </li>
+                        <li>
+    <a href="/4.x/definitions/values.html">Primitive Values</a>
+
+    </li>
+            </ul>
+
+    </li>
+                        <li>
+    <a href="/4.x/lazy.html">Lazy Resolution</a>
+
+    </li>
+                        <li>
+    <a href="/4.x/providers.html">Definition Providers</a>
+
+    </li>
+                        <li>
+    <a href="/4.x/upgrading.html">Upgrading</a>
+
+    </li>
+            </ul>
+
+    </li>
+                        <li>
     <a href="/3.x/">Capsule 3.x</a>
     
     <ul class="dropdown-menu">
@@ -124,19 +174,19 @@
             <nav class="nav-left hidden-xs hidden-sm" id="sideNav">
     <ul class="nav nav-stacked" data-spy="affix" data-offset-top="59" role="tablist">
                                 <li>
-                <a href="#1-3-4" title="Primitive&#x20;Values">Primitive Values</a>
+                <a href="#2-3-4" title="Primitive&#x20;Values">Primitive Values</a>
             </li>
                                 <li>
-                <a href="#1-3-4-1" title="Lazy&#x20;Resolution">Lazy Resolution</a>
+                <a href="#2-3-4-1" title="Lazy&#x20;Resolution">Lazy Resolution</a>
             </li>
                                 <li>
-                <a href="#1-3-4-2" title="Naming&#x20;Convention">Naming Convention</a>
+                <a href="#2-3-4-2" title="Naming&#x20;Convention">Naming Convention</a>
             </li>
             </ul>
 </nav>
         </div>
                 <div class="col-md-9">
-<div id="section-main"><h1 id="1-3-4">1.3.4. Primitive Values</h1>
+<div id="section-main"><h1 id="2-3-4">2.3.4. Primitive Values</h1>
 <p>You can also define primitive values, such as nulls, booleans, integers, floats,
 strings, arrays, or resources:</p>
 <pre><code class="language-php">$def-&gt;foo = 'bar';
@@ -150,7 +200,7 @@ $def-&gt;{'template.helpers'}[] = 'escape';
 $def-&gt;{'template.helpers'}[] = 'input';
 // etc
 </code></pre>
-<h2 id="1-3-4-1">1.3.4.1. Lazy Resolution</h2>
+<h2 id="2-3-4-1">2.3.4.1. Lazy Resolution</h2>
 <p>Primitive value definitions may also be <em>Lazy</em> (described elsewhere). For
 example:</p>
 <pre><code class="language-php">$def-&gt;{'db.dsn'} = $def-&gt;env('DB_DSN');
@@ -165,7 +215,7 @@ $def-&gt;{'db.pass'} = $def-&gt;env('DB_PASS');
         'pass' =&gt; $def-&gt;get('db.pass'),
     ]);
 </code></pre>
-<h2 id="1-3-4-2">1.3.4.2. Naming Convention</h2>
+<h2 id="2-3-4-2">2.3.4.2. Naming Convention</h2>
 <p>Remember that all values and objects in the <em>Definitions</em> share the same space
 for their IDs. To reduce naming conflicts among different libraries and
 packages, you may wish to adopt a value naming convention based on where those

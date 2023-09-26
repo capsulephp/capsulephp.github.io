@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
 <meta name="HandheldFriendly" content="True"/>
-<title>Definition Providers</title>
+<title>Overview</title>
     
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/spacelab/bootstrap.min.css" />
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
@@ -164,8 +164,8 @@
 <div class="container">
     <ol class="breadcrumb">
                         <li><a href="/">Capsule</a></li>
-                                <li><a href="/3.x/">Capsule 3.x</a></li>
-                                <li class="active">Definition Providers</li>
+                                <li><a href="/4.x/">Capsule 4.x</a></li>
+                                <li class="active">Overview</li>
             </ol>
     <div class="row">
 
@@ -173,71 +173,56 @@
             <nav class="nav-left hidden-xs hidden-sm" id="sideNav">
     <ul class="nav nav-stacked" data-spy="affix" data-offset-top="59" role="tablist">
                                 <li>
-                <a href="#2-5" title="Definition&#x20;Providers">Definition Providers</a>
+                <a href="#1-1" title="Overview">Overview</a>
             </li>
             </ul>
 </nav>
         </div>
                 <div class="col-md-9">
-<div id="section-main"><h1 id="2-5">2.5. Definition Providers</h1>
-<p>You can create one or more <em>Provider</em> classes to work with a <em>Definitions</em>
-instance. To do so, implement the <em>Provider</em> interface ...</p>
-<pre><code class="language-php">use Capsule\Di\Definitions;
-use Capsule\Di\Provider;
-
-class PdoProvider implements Provider
+<div id="section-main"><h1 id="1-1">1.1. Overview</h1>
+<p>Capsule is a <a href="https://www.php-fig.org/psr/psr-11/">PSR-11 (2.0)</a> compliant
+autowiring dependency injection container with object-oriented configuration of
+constructor arguments and initialization methods, along with lazy resolution of
+arguments from various sources. Intended primarily for object entries, Capsule
+makes allowance for storing value entries as well.</p>
+<p>Given a hypothetical <em>DataSource</em> class ...</p>
+<pre><code class="language-php">class DataSource
 {
-    public function provide(Definitions $def) : void
+    public function __construct(PDO $pdo)
     {
-        $def-&gt;{PDO::CLASS}
-            -&gt;arguments([
-                $def-&gt;env('PDO_DSN'),
-                $def-&gt;env('PDO_USERNAME'),
-                $def-&gt;env('PDO_PASSWORD')
-            ]);
+        $this-&gt;pdo = $pdo;
     }
+
+    /* ... methods using $this-&gt;pdo ... */
 }
 </code></pre>
-<p>... then pass an iterable of <em>Provider</em> instances to a new <em>Container</em>:</p>
-<pre><code class="language-php">$providers = [
-    new PdoProvider(),
-];
+<p>... the following Capsule <em>Container</em> provides a shared instance of
+that <em>DataSource</em> using a shared instance of <em>PDO</em>:</p>
+<pre><code class="language-php">use Capsule\Di\Container;
+use Capsule\Di\Definitions;
 
-$container = new Container(
-    new Definitions(),
-    $providers
-);
+$def = new Definitions();
+
+$def-&gt;{PDO::CLASS}
+    -&gt;arguments([
+        $def-&gt;env('PDO_DSN'),
+        $def-&gt;env('PDO_USERNAME'),
+        $def-&gt;env('PDO_PASSWORD')
+    ]);
+
+$container = new Container($def);
+
+$dataSource = $container-&gt;get(DataSource::CLASS);
 </code></pre>
-<p>The <code>$providers</code> may be any <em>iterable</em> of <em>Provider</em> instances, not just an
-array.</p>
-<p>You can use <em>Provider</em> instances for definitions organized by:</p>
-<ul>
-<li>classes or class collections</li>
-<li>libraries or library collections</li>
-<li>packages or package collections</li>
-<li>HTTP or command line interfaces</li>
-<li>Development, test, or production environments</li>
-</ul>
-<p>It is up to you how you organize your <em>Provider</em> instances. For example, you
-may organize them by DDD and environment layers, like so:</p>
-<pre><code class="language-php">$providers = [
-    new DomainLayerProvider(),
-    new ApplicatonLayerProvider(),
-    new InfrastructureLayerProvider(),
-    new HttpLayerProvider(),
-    new ProductionEnvironmentProvider(),
-];
-</code></pre>
-<p>You may wish to make your <em>Provider</em> instances mixable in various combinations,
-so you can reuse "lower" or "inner" definitions in concert with "higher"
-or "outer" definitions. For example, reusing some core definitions in a
-different environment:</p>
-<pre><code class="language-php">$providers = [
-    new DomainLayerProvider(),
-    new ApplicatonLayerProvider(),
-    new IntegrationTestingProvider(),
-];
-</code></pre>
+<p>Capsule reflects on the <em>DataSource</em> class and sees that it needs a <em>PDO</em>
+instance. In turn, Capsule examines the <em>PDO</em> class definition, and
+creates a <em>PDO</em> instance using the <code>PDO_*</code> environment variables. Having done
+so, Capsule then uses that <em>PDO</em> instance to create the <em>DataSource</em>, and
+returns it.</p>
+<p>Although Capsule can inject object arguments implicitly based on the parameter
+type, it will not do so for scalar, array, resource, etc. types, nor will it
+do so for union typed parameters. Arguments for those types of parameters must
+be explicitly specified in the definition.</p>
 </div>        </div>
     </div>
 </div>
@@ -247,9 +232,9 @@ different environment:</p>
         <div class="container">
             <div class="row">
                 <div class="prev col-xs-6">
-                                            <a href="/3.x/lazy.html">Previous</a>                                    </div>
+                                            <a href="/4.x/">Previous</a>                                    </div>
                 <div class="next col-xs-6">
-                                            <a href="/3.x/upgrading.html">Next</a>                                    </div>
+                                            <a href="/4.x/container.html">Next</a>                                    </div>
             </div>
         </div>
     </div>

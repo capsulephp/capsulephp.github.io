@@ -48,6 +48,56 @@
     
     <ul class="nav navbar-nav">
                         <li>
+    <a href="/4.x/">Capsule 4.x</a>
+    
+    <ul class="dropdown-menu">
+                        <li>
+    <a href="/4.x/overview.html">Overview</a>
+
+    </li>
+                        <li>
+    <a href="/4.x/container.html">Container Usage</a>
+
+    </li>
+                        <li>
+    <a href="/4.x/definitions/">Definitions</a>
+    
+    <ul class="dropdown-menu">
+                        <li>
+    <a href="/4.x/definitions/overview.html">Overview</a>
+
+    </li>
+                        <li>
+    <a href="/4.x/definitions/classes.html">Class Definitions</a>
+
+    </li>
+                        <li>
+    <a href="/4.x/definitions/interfaces.html">Interface Definitions</a>
+
+    </li>
+                        <li>
+    <a href="/4.x/definitions/values.html">Primitive Values</a>
+
+    </li>
+            </ul>
+
+    </li>
+                        <li>
+    <a href="/4.x/lazy.html">Lazy Resolution</a>
+
+    </li>
+                        <li>
+    <a href="/4.x/providers.html">Definition Providers</a>
+
+    </li>
+                        <li>
+    <a href="/4.x/upgrading.html">Upgrading</a>
+
+    </li>
+            </ul>
+
+    </li>
+                        <li>
     <a href="/3.x/">Capsule 3.x</a>
     
     <ul class="dropdown-menu">
@@ -122,36 +172,36 @@
             <nav class="nav-left hidden-xs hidden-sm" id="sideNav">
     <ul class="nav nav-stacked" data-spy="affix" data-offset-top="59" role="tablist">
                                 <li>
-                <a href="#2" title="Capsule&#x20;2.x">Capsule 2.x</a>
+                <a href="#3" title="Capsule&#x20;2.x">Capsule 2.x</a>
             </li>
                                 <li>
-                <a href="#2-1" title="Example">Example</a>
+                <a href="#3-1" title="Example">Example</a>
             </li>
                                 <li>
-                <a href="#2-2" title="Container&#x20;Methods">Container Methods</a>
+                <a href="#3-2" title="Container&#x20;Methods">Container Methods</a>
             </li>
                                                                                             <li>
-                <a href="#2-3" title="Object&#x20;Definition&#x20;Methods">Object Definition Method...</a>
+                <a href="#3-3" title="Object&#x20;Definition&#x20;Methods">Object Definition Method...</a>
             </li>
                                                                                 <li>
-                <a href="#2-4" title="Lazy&#x20;Arguments">Lazy Arguments</a>
+                <a href="#3-4" title="Lazy&#x20;Arguments">Lazy Arguments</a>
             </li>
                                                                                                                                                         <li>
-                <a href="#2-5" title="Value&#x20;Definition&#x20;Methods">Value Definition Methods</a>
+                <a href="#3-5" title="Value&#x20;Definition&#x20;Methods">Value Definition Methods</a>
             </li>
                                 <li>
-                <a href="#2-6" title="Definition&#x20;Providers">Definition Providers</a>
+                <a href="#3-6" title="Definition&#x20;Providers">Definition Providers</a>
             </li>
             </ul>
 </nav>
         </div>
                 <div class="col-md-9">
-<div id="section-main"><h1 id="2">2. Capsule 2.x</h1>
+<div id="section-main"><h1 id="3">3. Capsule 2.x</h1>
 <p>A <a href="https://www.php-fig.org/psr/psr-11/">PSR-11</a> compliant autowiring dependency
 injection container with class-based configuration of constructor arguments and
 initialization methods, and lazy evaluation of arguments. Intended primarily for
 objects, the container also makes allowance for storing non-object values.</p>
-<h2 id="2-1">2.1. Example</h2>
+<h2 id="3-1">3.1. Example</h2>
 <p>The following container provides a shared instance of a hypothetical data mapper
 using a shared instance of PDO.</p>
 <pre><code class="language-php">use Capsule\Di\Definitions;
@@ -178,13 +228,13 @@ $container = $def-&gt;newContainer();
 
 $dataMapper = $container-&gt;get(DataMapper::CLASS);
 </code></pre>
-<h2 id="2-2">2.2. Container Methods</h2>
+<h2 id="3-2">3.2. Container Methods</h2>
 <blockquote>
 <p>N.b.: If you use PHPStorm, you can copy the <code>resources/phpstorm.meta.php</code>
 file to your project root as <code>.phpstorm.meta.php</code> for autocompletion on
 <code>get()</code> and <code>new()</code> method calls.</p>
 </blockquote>
-<h3 id="2-2-1">2.2.1. get(<em>string</em> $id) : <em>mixed</em>
+<h3 id="3-2-1">3.2.1. get(<em>string</em> $id) : <em>mixed</em>
 </h3>
 <p>Returns a shared instance of the specified entry class, or the entry value.
 Multiple calls to <code>get()</code> return the same object instance.</p>
@@ -192,14 +242,14 @@ Multiple calls to <code>get()</code> return the same object instance.</p>
 $foo2 = $container-&gt;get(Foo::CLASS);
 var_dump($foo1 === $foo2); // bool(true)
 </code></pre>
-<h3 id="2-2-2">2.2.2. has(<em>string</em> $id) : <em>bool</em>
+<h3 id="3-2-2">3.2.2. has(<em>string</em> $id) : <em>bool</em>
 </h3>
 <p>Returns <code>true</code> if the Container has an <code>$id</code> entry, or if the <code>$id</code> is an
 existing class; otherwise, <code>false</code>.</p>
 <pre><code class="language-php">$container-&gt;has(stdClass::CLASS); // true
 $container-&gt;has('NoSuchClass'); // false
 </code></pre>
-<h3 id="2-2-3">2.2.3. new(<em>string</em> $id) : <em>mixed</em>
+<h3 id="3-2-3">3.2.3. new(<em>string</em> $id) : <em>mixed</em>
 </h3>
 <p>Returns a new instance of the specified entry class, or the entry value.
 Multiple calls to <code>new()</code> return different new object instances.</p>
@@ -207,7 +257,7 @@ Multiple calls to <code>new()</code> return different new object instances.</p>
 $foo2 = $container-&gt;new(Foo::CLASS);
 var_dump($foo1 === $foo2); // bool(false)
 </code></pre>
-<h3 id="2-2-4">2.2.4. callableGet(<em>string</em> $id) : <em>callable</em>
+<h3 id="3-2-4">3.2.4. callableGet(<em>string</em> $id) : <em>callable</em>
 </h3>
 <p>Returns a call to <code>get()</code> wrapped in a closure. Useful for providing factories
 to other containers.</p>
@@ -216,7 +266,7 @@ $foo1 = $callable();
 $foo2 = $callable();
 var_dump($foo1 === $foo2); // bool(true)
 </code></pre>
-<h3 id="2-2-5">2.2.5. callableNew(<em>string</em> $id) : <em>callable</em>
+<h3 id="3-2-5">3.2.5. callableNew(<em>string</em> $id) : <em>callable</em>
 </h3>
 <p>Returns a call to <code>new()</code> wrapped in a closure. Useful for providing factories
 to other containers.</p>
@@ -225,7 +275,7 @@ $foo1 = $callable();
 $foo2 = $callable();
 var_dump($foo1 === $foo2); // bool(false)
 </code></pre>
-<h2 id="2-3">2.3. Object Definition Methods</h2>
+<h2 id="3-3">3.3. Object Definition Methods</h2>
 <p>Whereas the <em>Container</em> will create and retain objects automatically, you may
 need to define some factories and arguments for their construction. You can do
 so via the <em>Definitions</em> object.</p>
@@ -265,7 +315,7 @@ $def-&gt;value('val1', ...);
 <blockquote>
 <p>N.b.: Objects and values share the <code>$id</code> space.</p>
 </blockquote>
-<h3 id="2-3-1">2.3.1. arguments(array $arguments) : <em>Definition</em>
+<h3 id="3-3-1">3.3.1. arguments(array $arguments) : <em>Definition</em>
 </h3>
 <p>Sets all the arguments for the <code>$id</code> constructor parameters, replacing all
 previously-existing arguments for <code>$id</code>.</p>
@@ -295,7 +345,7 @@ previously-existing arguments for <code>$id</code>.</p>
 <blockquote>
 <p>N.b.: Named arguments take precedence over positional ones.</p>
 </blockquote>
-<h3 id="2-3-2">2.3.2. argument(<em>int|string</em> $parameter, <em>mixed</em> $argument) : <em>Definition</em>
+<h3 id="3-3-2">3.3.2. argument(<em>int|string</em> $parameter, <em>mixed</em> $argument) : <em>Definition</em>
 </h3>
 <p>Sets one argument for a <code>$id</code> constructor parameter by position or name,
 replacing any previously-existing argument.</p>
@@ -306,7 +356,7 @@ replacing any previously-existing argument.</p>
 <blockquote>
 <p>N.b.: Named arguments take precedence over positional ones.</p>
 </blockquote>
-<h3 id="2-3-3">2.3.3. factory(<em>callable</em> $callable) : <em>Definition</em>
+<h3 id="3-3-3">3.3.3. factory(<em>callable</em> $callable) : <em>Definition</em>
 </h3>
 <p>Use this to set a callable factory for a <code>$id</code> (instead of letting the
 <em>Container</em> to construct it for you). The callable factory must have the
@@ -326,7 +376,7 @@ following signature ...</p>
         return new BarImplementation();
     });
 </code></pre>
-<h3 id="2-3-4">2.3.4. method(<em>string</em> $method, ...$arguments) : <em>Definition</em>
+<h3 id="3-3-4">3.3.4. method(<em>string</em> $method, ...$arguments) : <em>Definition</em>
 </h3>
 <p>Specifies methods to call on the <code>$id</code> object after it is instantiated,
 whether by <em>Container</em> itself or by a factory. Use this for setter injection,
@@ -347,7 +397,7 @@ or for other post-instantiation initializer logic.</p>
     -&gt;method('append', 'bar')
     -&gt;method('append', 'baz');
 </code></pre>
-<h2 id="2-4">2.4. Lazy Arguments</h2>
+<h2 id="3-4">3.4. Lazy Arguments</h2>
 <p>Often you will not want to have your arguments evaluated at the time you specify
 them. For example, you may want a specify a new object instance as a constructor
 argument, but of course you don't want to instantiate that object at the moment
@@ -360,7 +410,7 @@ purposes.</p>
 <p>N.b.: <em>Lazy</em> can be used both for constructor arguments and for <code>method()</code>
 call arguments.</p>
 </blockquote>
-<h3 id="2-4-1">2.4.1. Lazy::call(<em>callable</em> $callable) : LazyInterface</h3>
+<h3 id="3-4-1">3.4.1. Lazy::call(<em>callable</em> $callable) : LazyInterface</h3>
 <p>Resolves to the result returned by a <a href="https://www.php.net/callable">callable</a>;
 the callable must have this signature ...</p>
 <pre><code>function (Container $container)
@@ -377,14 +427,14 @@ the callable must have this signature ...</p>
     )
 );
 </code></pre>
-<h3 id="2-4-2">2.4.2. Lazy::env(<em>string</em> $varname) : LazyInterface</h3>
+<h3 id="3-4-2">3.4.2. Lazy::env(<em>string</em> $varname) : LazyInterface</h3>
 <p>Resolves to the value of the <em>$varname</em> environment variable.</p>
 <pre><code class="language-php">$def-&gt;object(Foo::CLASS)
     -&gt;argument('bar', Lazy::env('BAR'));
 
 // --&gt; return getenv('BAR');
 </code></pre>
-<h3 id="2-4-3">2.4.3. Lazy::functionCall(<em>string</em> $function, ...$arguments) : LazyInterface</h3>
+<h3 id="3-4-3">3.4.3. Lazy::functionCall(<em>string</em> $function, ...$arguments) : LazyInterface</h3>
 <p>Resolves to the return of a function call.</p>
 <pre><code class="language-php">$def-&gt;object(Foo::class)
     -&gt;argument('bar', Lazy::functionCall('barfunc'));
@@ -394,14 +444,14 @@ the callable must have this signature ...</p>
 <blockquote>
 <p>N.b.: The <code>$arguments</code> themselves can be <em>Lazy</em> as well.</p>
 </blockquote>
-<h3 id="2-4-4">2.4.4. Lazy::get(<em>string</em> $id) : LazyInterface</h3>
+<h3 id="3-4-4">3.4.4. Lazy::get(<em>string</em> $id) : LazyInterface</h3>
 <p>Resolves to an object returned by <em>Container</em> <code>get()</code>.</p>
 <pre><code class="language-php">$def-&gt;object(Foo::CLASS)
     -&gt;argument('bar', Lazy::get(Bar::CLASS));
 
 // --&gt; return $container-&gt;get(Bar::CLASS);
 </code></pre>
-<h3 id="2-4-5">2.4.5. Lazy::getCall(<em>string</em> $id, <em>string</em> $method, ...$arguments) : LazyInterface</h3>
+<h3 id="3-4-5">3.4.5. Lazy::getCall(<em>string</em> $id, <em>string</em> $method, ...$arguments) : LazyInterface</h3>
 <p>Resolves to a method call on an object returned by <em>Container</em> <code>get()</code>.</p>
 <pre><code class="language-php">$def-&gt;object(Foo::CLASS)
     -&gt;method('setBarVal', Lazy::getCall(Bar::CLASS, 'getValue'));
@@ -411,21 +461,21 @@ the callable must have this signature ...</p>
 <blockquote>
 <p>N.b.: The <code>$arguments</code> themselves can be <em>Lazy</em> as well.</p>
 </blockquote>
-<h3 id="2-4-6">2.4.6. Lazy::include(<em>string|LazyInterface</em> $file) : LazyInterface</h3>
+<h3 id="3-4-6">3.4.6. Lazy::include(<em>string|LazyInterface</em> $file) : LazyInterface</h3>
 <p>Resolves to the result returned by including a file.</p>
 <pre><code class="language-php">$def-&gt;object(Foo::CLASS)
     -&gt;method('setBar', Lazy::include('bar.php'));
 
 // --&gt; return include 'bar.php';
 </code></pre>
-<h3 id="2-4-7">2.4.7. Lazy::new(<em>string</em> $id) : LazyInterface</h3>
+<h3 id="3-4-7">3.4.7. Lazy::new(<em>string</em> $id) : LazyInterface</h3>
 <p>Resolves to an object returned by <em>Container</em> <code>new()</code>.</p>
 <pre><code class="language-php">$def-&gt;object(Foo::CLASS)
     -&gt;arguments([Lazy::new(Bar::CLASS)]);
 
 // --&gt; $container-&gt;new(Bar::CLASS)
 </code></pre>
-<h3 id="2-4-8">2.4.8. Lazy::newCall(<em>string</em> $id, <em>string</em> $method, ...$arguments) : LazyInterface</h3>
+<h3 id="3-4-8">3.4.8. Lazy::newCall(<em>string</em> $id, <em>string</em> $method, ...$arguments) : LazyInterface</h3>
 <p>Resolves to a method call on an object returned by <em>Container</em> <code>new()</code>.</p>
 <pre><code class="language-php">$def-&gt;object(Foo::CLASS)
     -&gt;method('setBarVal', Lazy::newCall(Bar::CLASS, 'getValue'));
@@ -435,14 +485,14 @@ the callable must have this signature ...</p>
 <blockquote>
 <p>N.b.: The <code>$arguments</code> themselves can be <em>Lazy</em> as well.</p>
 </blockquote>
-<h3 id="2-4-9">2.4.9. Lazy::require(<em>string|Lazy</em> $file) : LazyInterface</h3>
+<h3 id="3-4-9">3.4.9. Lazy::require(<em>string|Lazy</em> $file) : LazyInterface</h3>
 <p>Resolves to the result returned by requiring a file.</p>
 <pre><code class="language-php">$def-&gt;object(Foo::CLASS)
     -&gt;method('setBar', Lazy::require('bar.php'));
 
 // --&gt; return require 'bar.php';
 </code></pre>
-<h3 id="2-4-10">2.4.10. Lazy::staticCall(<em>string</em> $class, <em>string</em> $method, ...$arguments) : LazyInterface</h3>
+<h3 id="3-4-10">3.4.10. Lazy::staticCall(<em>string</em> $class, <em>string</em> $method, ...$arguments) : LazyInterface</h3>
 <p>Resolves to the return of a static method call.</p>
 <pre><code class="language-php">$def-&gt;object(Foo::class)
     -&gt;argument('bar', Lazy::staticCall('Bar', 'func'));
@@ -452,7 +502,7 @@ the callable must have this signature ...</p>
 <blockquote>
 <p>N.b.: The <code>$arguments</code> themselves can be <em>Lazy</em> as well.</p>
 </blockquote>
-<h2 id="2-5">2.5. Value Definition Methods</h2>
+<h2 id="3-5">3.5. Value Definition Methods</h2>
 <p>The <em>Definitions</em> object has one method to define value <code>$id</code> entries:</p>
 <pre><code class="language-php">// define the 'foo' $id entry as the string 'bar'
 $def-&gt;value('foo', 'bar');
@@ -461,7 +511,7 @@ $def-&gt;value('foo', 'bar');
 previously existing <code>foo</code> object; the call to <code>value()</code> will throw an exception
 in that case.</p>
 <p>Values can be any PHP value: scalar, array, resource, etc.</p>
-<h2 id="2-6">2.6. Definition Providers</h2>
+<h2 id="3-6">3.6. Definition Providers</h2>
 <p>You can create a series of <em>Provider</em> classes to operate on a <em>Definitions</em>
 instance. This can help to keep definition sets separate from each other, so
 you can mix-and-match them on a contextual basis.</p>

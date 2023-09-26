@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
 <meta name="HandheldFriendly" content="True"/>
-<title>Definition Providers</title>
+<title>Class Definitions</title>
     
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/spacelab/bootstrap.min.css" />
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
@@ -164,8 +164,9 @@
 <div class="container">
     <ol class="breadcrumb">
                         <li><a href="/">Capsule</a></li>
-                                <li><a href="/3.x/">Capsule 3.x</a></li>
-                                <li class="active">Definition Providers</li>
+                                <li><a href="/4.x/">Capsule 4.x</a></li>
+                                <li><a href="/4.x/definitions/">Definitions</a></li>
+                                <li class="active">Class Definitions</li>
             </ol>
     <div class="row">
 
@@ -173,70 +174,292 @@
             <nav class="nav-left hidden-xs hidden-sm" id="sideNav">
     <ul class="nav nav-stacked" data-spy="affix" data-offset-top="59" role="tablist">
                                 <li>
-                <a href="#2-5" title="Definition&#x20;Providers">Definition Providers</a>
+                <a href="#1-3-2" title="Class&#x20;Definitions">Class Definitions</a>
+            </li>
+                                <li>
+                <a href="#1-3-2-1" title="Construction">Construction</a>
+            </li>
+                                                                                            <li>
+                <a href="#1-3-2-2" title="Pre-Construction">Pre-Construction</a>
+            </li>
+                                                                    <li>
+                <a href="#1-3-2-3" title="Post-Construction">Post-Construction</a>
+            </li>
+                                                                    <li>
+                <a href="#1-3-2-4" title="Inheritance">Inheritance</a>
             </li>
             </ul>
 </nav>
         </div>
                 <div class="col-md-9">
-<div id="section-main"><h1 id="2-5">2.5. Definition Providers</h1>
-<p>You can create one or more <em>Provider</em> classes to work with a <em>Definitions</em>
-instance. To do so, implement the <em>Provider</em> interface ...</p>
-<pre><code class="language-php">use Capsule\Di\Definitions;
-use Capsule\Di\Provider;
-
-class PdoProvider implements Provider
+<div id="section-main"><h1 id="1-3-2">1.3.2. Class Definitions</h1>
+<p>Define the construction logic, including pre- and post-construction logic, for
+classes. There is also the ability to inherit (or not inherit) elements of
+the parent class definition.</p>
+<p>All of the <em>ClassDefinition</em> methods are fluent, and can be called in any
+order.</p>
+<h2 id="1-3-2-1">1.3.2.1. Construction</h2>
+<p>These will be applied when the <code>__construct()</code> method is called.</p>
+<h3 id="1-3-2-1-1">1.3.2.1.1. Constructor Arguments</h3>
+<h4 id="1-3-2-1-1-1">1.3.2.1.1.1. By Position or Name</h4>
+<p>Given this class ...</p>
+<pre><code class="language-php">class Foo
 {
-    public function provide(Definitions $def) : void
-    {
-        $def-&gt;{PDO::CLASS}
-            -&gt;arguments([
-                $def-&gt;env('PDO_DSN'),
-                $def-&gt;env('PDO_USERNAME'),
-                $def-&gt;env('PDO_PASSWORD')
-            ]);
+    public function __construct(
+        protected string $param0,
+        protected string $param1
+    ) {
     }
 }
 </code></pre>
-<p>... then pass an iterable of <em>Provider</em> instances to a new <em>Container</em>:</p>
-<pre><code class="language-php">$providers = [
-    new PdoProvider(),
-];
+<p>... you can set the constructor arguments all at once using <code>arguments()</code>,
+overriding all previous arguments:</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;arguments([
+        0 =&gt; 'arg0',
+        1 =&gt; 'arg1',
+    ]);
+</code></pre>
+<p>Alternatively, you can set them one at a time (or overriding an individual
+argument) using <code>argument()</code>:</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;argument(0, 'arg0')
+    -&gt;argument(1, 'arg1');
+</code></pre>
+<p>You can specify arguments by position or name in any combination you like. Given
+the above class, specifying the arguments by name would look like this:</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;arguments([
+        'param1' =&gt; 'arg1',
+        'param0' =&gt; 'arg0',
+    ]);
+</code></pre>
+<p><strong>Among named and positional arguments referring to the same parameter, a later
+argument replaces an earlier one.</strong> For example:</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;argument(0, 'positional'); // $param0 is now 'positional'
+    -&gt;argument('param0', 'named'); // $param0 is now 'named'
+    -&gt;argument(0, 'positional again'); // $param0 is now 'positional again'
+</code></pre>
+<h4 id="1-3-2-1-1-2">1.3.2.1.1.2. By Typehint</h4>
+<p>You can also specify arguments by typehint. Given a class like this ...</p>
+<pre><code class="language-php">class Bar
+{
+    public function __construct(
+        protected stdClass $param0,
+        protected string $param1
+    } {
+    }
+}
+</code></pre>
+<p>... you might specify the the arguments like so:</p>
+<pre><code class="language-php">$def-&gt;{Bar::CLASS}
+    -&gt;arguments([
+        'param1' =&gt; 'arg1',
+        stdClass::CLASS =&gt; new stdClass(),
+    ]);
+</code></pre>
+<p>Specifying arguments by typehint is best combined with <em>Lazy</em> resolution,
+described elsewhere.</p>
+<p><strong>Arguments specified by name or position take precedence over arguments
+specified by typehint.</strong></p>
+<h4 id="1-3-2-1-1-3">1.3.2.1.1.3. Variadic Arguments</h4>
+<p>If a class has a variadic constructor argument ...</p>
+<pre><code class="language-php">class Baz
+{
+    protected array $items;
 
-$container = new Container(
-    new Definitions(),
-    $providers
-);
+    public function __construct(
+        string ...$items
+    } {
+        $this-&gt;items = $items;
+    }
+}
 </code></pre>
-<p>The <code>$providers</code> may be any <em>iterable</em> of <em>Provider</em> instances, not just an
-array.</p>
-<p>You can use <em>Provider</em> instances for definitions organized by:</p>
-<ul>
-<li>classes or class collections</li>
-<li>libraries or library collections</li>
-<li>packages or package collections</li>
-<li>HTTP or command line interfaces</li>
-<li>Development, test, or production environments</li>
-</ul>
-<p>It is up to you how you organize your <em>Provider</em> instances. For example, you
-may organize them by DDD and environment layers, like so:</p>
-<pre><code class="language-php">$providers = [
-    new DomainLayerProvider(),
-    new ApplicatonLayerProvider(),
-    new InfrastructureLayerProvider(),
-    new HttpLayerProvider(),
-    new ProductionEnvironmentProvider(),
-];
+<p>... it must be set using an array, like so:</p>
+<pre><code class="language-php">$def-&gt;{Baz::CLASS}
+    -&gt;argument('items', ['a', 'b', 'c']);
 </code></pre>
-<p>You may wish to make your <em>Provider</em> instances mixable in various combinations,
-so you can reuse "lower" or "inner" definitions in concert with "higher"
-or "outer" definitions. For example, reusing some core definitions in a
-different environment:</p>
-<pre><code class="language-php">$providers = [
-    new DomainLayerProvider(),
-    new ApplicatonLayerProvider(),
-    new IntegrationTestingProvider(),
-];
+<h4 id="1-3-2-1-1-4">1.3.2.1.1.4. Argument Examination and References</h4>
+<p>You can see if an argument value has been defined using <code>hasArgument()</code>, and
+retrieve the value of the argument using <code>getArgument()</code>.</p>
+<pre><code class="language-php">if (! $def-&gt;{Foo::CLASS}-&gt;hasArgument('bar')) {
+    $def-&gt;{Foo::CLASS}-&gt;argument('bar', 'barval');
+}
+
+assert($def-&gt;{Foo::CLASS}-&gt;get('bar') === 'barval');
+</code></pre>
+<p>You can also get a <em><strong>reference</strong></em> to the argument value using <code>refArgument()</code>,
+so you can modify that value in place without having to get it and re-set it.</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}-&gt;argument('bar', 'barval');
+
+// ...
+
+$bar =&amp; $def-&gt;{Foo::CLASS}-&gt;refArgument('bar');
+$bar .= 'suffixed';
+
+assert($def-&gt;{Foo::CLASS}-&gt;get('bar') === 'barvalsuffixed');
+</code></pre>
+<h2 id="1-3-2-2">1.3.2.2. Pre-Construction</h2>
+<p>These will be applied to the object instance before the <code>__construct()</code> method is called.</p>
+<h3 id="1-3-2-2-1">1.3.2.2.1. Class Overrides</h3>
+<p>If you like, you can specify an alternative class to use for instantiation
+instead of the using the definition ID as the class name. This means you can
+use a class that is different from the typehint ...</p>
+<pre><code class="language-php">$def-&gt;{AbstractFoo::CLASS}
+    -&gt;class(Foo::CLASS)
+</code></pre>
+<p>... in which case you should be careful that the replacement class will actually
+work for the typehint.</p>
+<p>Setting an alternative <code>class()</code> will cause the <em>Container</em> to use the
+definition for that other class. In the above example, that means any
+<em>AbstractFoo</em> pre- and post-construction logic will be ignored in favor of
+the <em>Foo</em> object definition, although the <em>Foo</em> definition will still
+inherit any defined <em>AbstractFoo</em> properties and arguments.</p>
+<h3 id="1-3-2-2-2">1.3.2.2.2. Factory Instantiation</h3>
+<p>Instead of relying on automatic instantiation via <code>class()</code>, <code>properties ()</code>, and <code>arguments()</code>, you can set a callable factory on the class
+definition. This lets you create the object yourself, instead of letting
+the <em>Container</em> instantiate it for you.</p>
+<p><strong>The <code>factory()</code> takes precedence over the <code>class()</code>, <code>properties()</code>, and
+<code>arguments()</code> settings.</strong></p>
+<p>The callable factory must have the following signature ...</p>
+<pre><code class="language-php">function (Container $container) : object
+</code></pre>
+<p>... although the return typehint may be more specific if you like.</p>
+<p>For example:</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;factory(function (Container $container) : Foo {
+        return new Foo(); // or perform any other complex creation logic
+    });
+</code></pre>
+<p>The <code>factory()</code> may be <em>Lazy</em>:</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;factory(
+        $def-&gt;newCall(FooFactory::CLASS, 'newInstance')
+    );
+</code></pre>
+<p>It can also be used to return a class that is entirely different from the
+typehint ...</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;factory(function (Container $container) : Bar {
+        return new Bar();
+    });
+</code></pre>
+<p>... in which case you must be careful that the replacement class will work for
+the typehint.</p>
+<h3 id="1-3-2-2-3">1.3.2.2.3. Property Injection</h3>
+<p>To set any property before construction, call the <code>property()</code> method with a
+property name and value:</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;property('prop1', 'prop1value')
+    -&gt;property('prop2', 'prop2value')
+    -&gt;property('prop3', 'prop3value');
+</code></pre>
+<p>The property value may be <em>Lazy</em> resolvable.</p>
+<p>Alternatively, you can set multiple properties all at once using <code>properties()</code>,
+overriding all previous properties:</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;properties([
+        'prop1' =&gt; 'prop1value',
+        'prop2' =&gt; 'prop2value',
+        'prop3' =&gt; 'prop3value',
+    ]);
+</code></pre>
+<blockquote>
+<p><strong>Warning:</strong></p>
+<p>Property injection is to be avoided as much as possible, and is provided only
+as a final fallback when no other approach is available. You should default to
+constructor injection instead of property injection.</p>
+</blockquote>
+<h2 id="1-3-2-3">1.3.2.3. Post-Construction</h2>
+<p>These post-construction methods will be applied to the object after initial
+construction (even if that construction was by <code>factory()</code>). You can specify
+them as many times as you like, and they will be applied in that order.</p>
+<h3 id="1-3-2-3-1">1.3.2.3.1. Setter Injection</h3>
+<p>Each call to <code>method()</code> indicates a method to call on the object after it is
+instantiated. The typical case is for setter injection, but it can be used for
+any post-construction initializer logic using class methods.</p>
+<p>Given this class ...</p>
+<pre><code class="language-php">class Foo
+{
+    protected $string;
+
+    public function wrap(string $prefix, string $suffix) : void
+    {
+        $this-&gt;string = $prefix . $this-&gt;string . $suffix;
+    }
+}
+</code></pre>
+<p>... you might direct these <code>method()</code> calls to occur after instantiation:</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;method('wrap', 'foo', 'bar')
+    -&gt;method('wrap', 'baz', 'dib');
+</code></pre>
+<p>Pass the method name as the first argument; the remaining arguments will be
+passed to that method call. These arguments may be <em>Lazy</em>.</p>
+<h3 id="1-3-2-3-2">1.3.2.3.2. General Modification</h3>
+<p>Sometimes <code>method()</code> calls will not be enough; you may need more complex
+modification logic. In these cases, add a <code>modify()</code> call to the definition.
+The typical use is for modifying the obejct itself, but it can be used for any
+other kind of initializer logic.</p>
+<p>Pass a callable with this signature ...</p>
+<pre><code class="language-php">function (Container $container, object $object) : void
+</code></pre>
+<p>... although the <code>object</code> typehint may be more specific if you like.</p>
+<p>For example:</p>
+<pre><code class="language-php">$def-&gt;{ComplexSetup::CLASS}
+    -&gt;modify(function (Container $container, ComplexSetup $object) : void {
+        // complicated setup logic, then
+        $object-&gt;finalize();
+    });
+</code></pre>
+<h3 id="1-3-2-3-3">1.3.2.3.3. Decorators</h3>
+<p>Whereas <code>method()</code> and <code>modify()</code> work on the object in place, the <code>decorate()</code>
+method allows you to return a completely different object if you like. To use
+it, pass a callable with following signature ...</p>
+<pre><code class="language-php">function (Container $container, object $object) : object
+</code></pre>
+<p>... although the <code>object</code> typehints may be more specific if you like. Be sure to
+return the new object at the end of the callable.</p>
+<p>For example:</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;decorate(function (Container $container, Foo $foo) : DecoratedFoo {
+        return new DecoratedFoo($foo);
+    });
+</code></pre>
+<h2 id="1-3-2-4">1.3.2.4. Inheritance</h2>
+<p>By default, the <em>Definition</em> for a class will "inherit" the defined arguments
+and properties of its parent classes. Inheritance of arguments and properties
+works all the way up to the highest parent.</p>
+<p>For example, given these classes ...</p>
+<pre><code class="language-php">class Foo
+{
+    public function __construct(string $arg0)
+    {
+    }
+}
+
+class Bar extends Foo
+{
+}
+</code></pre>
+<p>... and this <em>Definition</em> ...</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;argument(0, 'value1')
+</code></pre>
+<p>... then the value of <em>Bar</em> <code>$arg0</code> will be inherited from <em>Foo</em> <code>$arg0</code> (in
+this case, it will be <code>'value1'</code>).</p>
+<p>You can override any or all inherited arguments by using <code>argument()</code> or
+<code>arguments()</code> on the <em>Definition</em> for the child class.</p>
+<p>Likewise, you can override any or all inherited properties by using
+<code>property()</code> or <code>properties()</code> on the <em>Definition</em> for the child class.</p>
+<p>If you want to disable or interrupt inheritance, call <code>inherit(null)</code> on the
+child <em>Definition</em>:</p>
+<pre><code class="language-php">$def-&gt;{Foo::CLASS}
+    -&gt;argument(0, 'value1')
+
+$def-&gt;{Bar::CLASS}
+    -&gt;inherit(null);
 </code></pre>
 </div>        </div>
     </div>
@@ -247,9 +470,9 @@ different environment:</p>
         <div class="container">
             <div class="row">
                 <div class="prev col-xs-6">
-                                            <a href="/3.x/lazy.html">Previous</a>                                    </div>
+                                            <a href="/4.x/definitions/overview.html">Previous</a>                                    </div>
                 <div class="next col-xs-6">
-                                            <a href="/3.x/upgrading.html">Next</a>                                    </div>
+                                            <a href="/4.x/definitions/interfaces.html">Next</a>                                    </div>
             </div>
         </div>
     </div>
